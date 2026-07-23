@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DARE — Deconstruct, Attack, Remediate, Exchange</title>
+<meta name="description" content="The DARE Framework from Certified and Clueless. Worksheets, use cases, and training environments for anyone running a DARE session.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0b0f1a;
+    --surface:#121a2c;
+    --surface-2:#171f34;
+    --line:#26304a;
+    --ink:#eef1f7;
+    --ink-dim:#8a93ab;
+    --ink-faint:#586079;
+    --amber:#f2a154;
+    --red:#e2554f;
+    --green:#69b98a;
+    --serif:'Playfair Display', Georgia, serif;
+    --sans:'DM Sans', -apple-system, sans-serif;
+    --mono:'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background:var(--void);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.6;
+    overflow-x:hidden;
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(242,161,84,0.07), transparent),
+      radial-gradient(ellipse 700px 500px at 100% 20%, rgba(105,185,138,0.05), transparent);
+  }
+
+  a{ color:inherit; text-decoration:none; }
+
+  ::selection{ background:var(--amber); color:var(--void); }
+
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 28px; }
+
+  /* ---------- nav ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(11,15,26,0.85);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 28px; max-width:1120px; margin:0 auto;
+  }
+  .brand{
+    font-family:var(--mono); font-weight:600; font-size:15px;
+    letter-spacing:0.14em; color:var(--ink);
+  }
+  .brand span{ color:var(--amber); }
+  .nav-links{ display:flex; gap:32px; align-items:center; }
+  .nav-links a{
+    font-family:var(--mono); font-size:12.5px; letter-spacing:0.05em;
+    color:var(--ink-dim); transition:color .2s ease;
+  }
+  .nav-links a:hover{ color:var(--ink); }
+  .nav-cta{
+    border:1px solid var(--amber); color:var(--amber) !important;
+    padding:8px 16px; border-radius:2px;
+  }
+  .nav-cta:hover{ background:var(--amber); color:var(--void) !important; }
+  .nav-mobile-hide{ display:flex; }
+  @media (max-width:760px){ .nav-mobile-hide{ display:none; } }
+
+  /* ---------- hero ---------- */
+  .hero{ padding:96px 0 72px; }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.22em;
+    color:var(--amber); margin-bottom:22px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{
+    content:''; width:20px; height:1px; background:var(--amber);
+  }
+  h1.title{
+    font-family:var(--serif); font-weight:700;
+    font-size:clamp(58px, 11vw, 128px);
+    letter-spacing:0.01em;
+    line-height:0.95;
+    margin-bottom:20px;
+  }
+  .stage-line{
+    font-family:var(--mono); font-size:clamp(13px,2vw,16px);
+    color:var(--ink-dim); letter-spacing:0.03em; margin-bottom:28px;
+  }
+  .stage-line b{ color:var(--ink); font-weight:500; }
+  .hero-copy{
+    max-width:560px; color:var(--ink-dim); font-size:17px; margin-bottom:40px;
+  }
+  .hero-copy em{ color:var(--ink); font-style:normal; }
+
+  .cta-row{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:64px; }
+  .btn{
+    font-family:var(--mono); font-size:13px; letter-spacing:0.03em;
+    padding:13px 22px; border-radius:2px; display:inline-flex; align-items:center; gap:8px;
+    transition:all .2s ease; border:1px solid transparent;
+  }
+  .btn-primary{ background:var(--amber); color:var(--void); }
+  .btn-primary:hover{ background:#ffb56b; transform:translateY(-1px); }
+  .btn-ghost{ border-color:var(--line); color:var(--ink); }
+  .btn-ghost:hover{ border-color:var(--ink-dim); background:var(--surface); }
+
+  /* ---------- terminal signature ---------- */
+  .terminal{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:6px;
+    overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,0.6);
+  }
+  .terminal-bar{
+    display:flex; align-items:center; gap:8px;
+    padding:12px 16px; border-bottom:1px solid var(--line);
+    background:var(--surface-2);
+  }
+  .dot{ width:9px; height:9px; border-radius:50%; }
+  .dot:nth-child(1){ background:#e2554f44; border:1px solid #e2554f88;}
+  .dot:nth-child(2){ background:#f2a15444; border:1px solid #f2a15488;}
+  .dot:nth-child(3){ background:#69b98a44; border:1px solid #69b98a88;}
+  .terminal-title{
+    font-family:var(--mono); font-size:11px; color:var(--ink-faint);
+    margin-left:8px; letter-spacing:0.05em;
+  }
+  .terminal-body{
+    font-family:var(--mono); font-size:13.5px; line-height:1.85;
+    padding:24px 22px; min-height:238px;
+    white-space:pre-wrap; word-break:break-word;
+  }
+  .t-prompt{ color:var(--ink-faint); }
+  .t-stage{ color:var(--amber); font-weight:600; }
+  .t-dim{ color:var(--ink-dim); }
+  .t-bad{ color:var(--red); }
+  .t-good{ color:var(--green); }
+  .t-quote{ color:var(--ink); }
+  .cursor{
+    display:inline-block; width:7px; height:15px; background:var(--amber);
+    vertical-align:text-bottom; animation:blink 1s step-end infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  /* ---------- section shell ---------- */
+  section{ padding:88px 0; border-top:1px solid var(--line); }
+  .kicker{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.18em;
+    color:var(--amber); margin-bottom:14px;
+  }
+  h2.head{
+    font-family:var(--serif); font-size:clamp(30px,4vw,44px);
+    font-weight:700; margin-bottom:18px; max-width:640px;
+  }
+  .lede{ color:var(--ink-dim); max-width:600px; font-size:16px; margin-bottom:56px; }
+
+  /* ---------- four stages ---------- */
+  .stages{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); border-radius:6px; overflow:hidden;
+  }
+  .stage{
+    background:var(--surface); padding:32px 26px; position:relative;
+  }
+  .stage-letter{
+    font-family:var(--serif); font-size:52px; font-weight:700;
+    color:var(--amber); line-height:1; margin-bottom:18px;
+  }
+  .stage h3{
+    font-family:var(--mono); font-size:14px; letter-spacing:0.06em;
+    text-transform:uppercase; margin-bottom:10px; color:var(--ink);
+  }
+  .stage p{ color:var(--ink-dim); font-size:14.5px; }
+  @media (max-width:860px){
+    .stages{ grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width:520px){
+    .stages{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- explore cards ---------- */
+  .cards{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  @media (max-width:860px){ .cards{ grid-template-columns:1fr; } }
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:6px;
+    padding:30px 28px; display:flex; flex-direction:column; gap:16px;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .card:hover{ border-color:var(--ink-faint); transform:translateY(-3px); }
+  .card-tag{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.1em;
+    color:var(--green); text-transform:uppercase; width:fit-content;
+    border:1px solid #69b98a55; padding:4px 9px; border-radius:20px;
+  }
+  .card-tag.soon{ color:var(--ink-dim); border-color:var(--line); }
+  .card h3{ font-family:var(--serif); font-size:22px; font-weight:700; }
+  .card p{ color:var(--ink-dim); font-size:14.5px; flex-grow:1; }
+  .card-link{
+    font-family:var(--mono); font-size:12.5px; color:var(--amber);
+    display:flex; align-items:center; gap:6px;
+  }
+  .card-link.disabled{ color:var(--ink-faint); }
+
+  /* ---------- planning assistant band ---------- */
+  .band{
+    background:var(--surface-2); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:88px 0;
+  }
+  .band-inner{ display:flex; gap:56px; align-items:center; }
+  .band-inner .left{ flex:1.1; }
+  .band-inner .right{ flex:1; }
+  @media (max-width:860px){ .band-inner{ flex-direction:column; } }
+  .form-mock{
+    background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:26px;
+  }
+  .form-row{ margin-bottom:16px; }
+  .form-row label{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.05em;
+    color:var(--ink-faint); display:block; margin-bottom:7px; text-transform:uppercase;
+  }
+  .form-fake{
+    border:1px solid var(--line); background:var(--void); border-radius:3px;
+    padding:11px 13px; font-family:var(--mono); font-size:13px; color:var(--ink-dim);
+  }
+  .form-submit{
+    width:100%; margin-top:6px; background:var(--ink-faint); color:var(--void);
+    font-family:var(--mono); font-size:12.5px; padding:12px; border-radius:3px;
+    text-align:center; letter-spacing:0.04em;
+  }
+
+  /* ---------- book section ---------- */
+  .book-section .wrap{ display:flex; gap:60px; align-items:center; }
+  @media (max-width:860px){ .book-section .wrap{ flex-direction:column; } }
+  .book-cover{
+    flex-shrink:0; width:220px; height:320px; border-radius:4px;
+    background:linear-gradient(160deg, #1a2338 0%, #0b0f1a 100%);
+    border:1px solid var(--line);
+    display:flex; flex-direction:column; justify-content:space-between;
+    padding:28px 24px; box-shadow:0 30px 70px -25px rgba(0,0,0,0.7);
+  }
+  .book-cover .top{ font-family:var(--mono); font-size:10px; letter-spacing:0.15em; color:var(--ink-faint); }
+  .book-cover .mid{ font-family:var(--serif); font-size:26px; line-height:1.15; font-weight:700; }
+  .book-cover .mid .sub{ font-family:var(--sans); font-size:11.5px; color:var(--ink-dim); font-weight:400; display:block; margin-top:10px; line-height:1.5;}
+  .book-cover .bottom{ font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); letter-spacing:0.06em; }
+  .book-text p{ color:var(--ink-dim); margin-bottom:18px; max-width:520px; }
+  .book-text .lede-strong{ color:var(--ink); font-family:var(--serif); font-size:22px; margin-bottom:20px; }
+
+  /* ---------- footer ---------- */
+  footer{ border-top:1px solid var(--line); padding:56px 0 40px; }
+  .foot-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:32px; flex-wrap:wrap; margin-bottom:40px; }
+  .foot-cta h3{ font-family:var(--serif); font-size:26px; margin-bottom:14px; max-width:360px; }
+  .foot-cta p{ color:var(--ink-dim); font-size:14.5px; max-width:380px; margin-bottom:20px; }
+  .foot-qr{
+    display:flex; align-items:center; gap:16px;
+    background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:16px 20px;
+  }
+  .foot-qr img{ width:76px; height:76px; border-radius:3px; background:#fff; padding:4px; }
+  .foot-qr .qr-label{ font-family:var(--mono); font-size:11px; color:var(--ink-dim); line-height:1.6; }
+  .foot-qr .qr-label b{ color:var(--ink); display:block; font-size:12.5px; margin-bottom:4px; }
+  .foot-links{ display:flex; gap:26px; flex-wrap:wrap; }
+  .foot-links a{ font-family:var(--mono); font-size:12px; color:var(--ink-dim); }
+  .foot-links a:hover{ color:var(--ink); }
+  .foot-bottom{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    padding-top:24px; border-top:1px solid var(--line);
+    font-family:var(--mono); font-size:11.5px; color:var(--ink-faint);
+  }
+
+  /* ---------- reveal ---------- */
+  .reveal{ opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .cursor{ animation:none; }
+    html{ scroll-behavior:auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav>
+    <div class="brand">DARE<span>_</span></div>
+    <div class="nav-links nav-mobile-hide">
+      <a href="#stages">Framework</a>
+      <a href="#explore">Worksheets</a>
+      <a href="#explore">Use Cases</a>
+      <a href="#environments">Environments</a>
+      <a href="#book">Book</a>
+      <a href="#footer" class="nav-cta">Book a call</a>
+    </div>
+  </nav>
+</header>
+
+<section class="hero" style="border-top:none; padding-top:96px;">
+  <div class="wrap">
+    <div class="eyebrow">A DESIGN CONSTRAINT, NOT A CURRICULUM</div>
+    <h1 class="title">DARE</h1>
+    <div class="stage-line"><b>D</b>econstruct &nbsp;·&nbsp; <b>A</b>ttack &nbsp;·&nbsp; <b>R</b>emediate &nbsp;·&nbsp; <b>E</b>xchange</div>
+    <p class="hero-copy">The framework from <em>Certified and Clueless: From Knowing the Vulnerability to Understanding It</em>. Worksheets, use cases, and training environments for anyone running a DARE session, or thinking about running one.</p>
+    <div class="cta-row">
+      <a href="#explore" class="btn btn-primary">Get the worksheets</a>
+      <a href="#book" class="btn btn-ghost">About the book</a>
+    </div>
+
+    <div class="terminal reveal">
+      <div class="terminal-bar">
+        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        <div class="terminal-title">session.log</div>
+      </div>
+      <div class="terminal-body" id="termBody"></div>
+    </div>
+  </div>
+</section>
+
+<section id="stages">
+  <div class="wrap">
+    <div class="kicker reveal">THE FRAMEWORK</div>
+    <h2 class="head reveal">Four stages. Each one necessary.</h2>
+    <p class="lede reveal">None of them optional if the goal is the moment a learner stops reciting a vulnerability class and starts understanding why it works.</p>
+    <div class="stages reveal">
+      <div class="stage">
+        <div class="stage-letter">D</div>
+        <h3>Deconstruct</h3>
+        <p>Understand the system before you touch it. What it's built from, what it's trusting, and why. Ten to fifteen minutes, scoped tight to the vulnerability.</p>
+      </div>
+      <div class="stage">
+        <div class="stage-letter">A</div>
+        <h3>Attack</h3>
+        <p>Demonstration, guided replication, then a new target. The exploit is evidence that understanding is there. It is not the understanding itself.</p>
+      </div>
+      <div class="stage">
+        <div class="stage-letter">R</div>
+        <h3>Remediate</h3>
+        <p>The patched version runs beside the vulnerable one. Same attack, same learner. This time it fails. A pentester is supposed to fail.</p>
+      </div>
+      <div class="stage">
+        <div class="stage-letter">E</div>
+        <h3>Exchange</h3>
+        <p>The learner switches sides. The attacker reads their own attack in the logs. This is where "now I got it" happens most often.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="explore">
+  <div class="wrap">
+    <div class="kicker reveal">START HERE</div>
+    <h2 class="head reveal">Built to be used in a session, not just read.</h2>
+    <p class="lede reveal">Reusable material drawn directly from the applied chapters of the book, plus the live environments referenced throughout it.</p>
+    <div class="cards reveal">
+      <div class="card">
+        <span class="card-tag soon">In progress</span>
+        <h3>Worksheets</h3>
+        <p>Session worksheets for the four vulnerabilities in the book: SQL injection, no rate limiting, IDOR, and XSS. Deconstruct scope, attack sequence, remediation patch, and exchange angle, laid out to follow session-side.</p>
+        <span class="card-link disabled">Coming soon →</span>
+      </div>
+      <div class="card">
+        <span class="card-tag soon">In progress</span>
+        <h3>Use Cases</h3>
+        <p>The same vulnerability, framed for different sectors. Banking, government, healthcare, e-commerce. How the scenario changes when the audience does, and why that matters for Deconstruct.</p>
+        <span class="card-link disabled">Coming soon →</span>
+      </div>
+      <div class="card" id="environments">
+        <span class="card-tag">Live</span>
+        <h3>Environments</h3>
+        <p>VulnShop, ShopEasy, and Parallax. The vulnerable and patched applications used throughout the book, free, open source, and ready to deploy.</p>
+        <a href="https://labs.sarathg.me" class="card-link">labs.sarathg.me →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="band">
+  <div class="wrap band-inner">
+    <div class="left reveal">
+      <div class="kicker">NEXT</div>
+      <h2 class="head" style="margin-bottom:16px;">A planning assistant for trainers.</h2>
+      <p class="lede" style="margin-bottom:24px;">Answer a few questions about your next session, topic, duration, audience, number of participants, and get a DARE structure built around it: what to scope in Deconstruct, how to run Attack and Remediate for your time slot, and what Exchange should look like when the clock is short.</p>
+      <p class="lede" style="margin-bottom:0;">In development. If your session doesn't fit a standard shape, that's what the calendar link at the bottom of this page is for.</p>
+    </div>
+    <div class="right reveal">
+      <div class="form-mock">
+        <div class="form-row">
+          <label>Topic</label>
+          <div class="form-fake">SQL Injection</div>
+        </div>
+        <div class="form-row">
+          <label>Duration</label>
+          <div class="form-fake">90 minutes</div>
+        </div>
+        <div class="form-row">
+          <label>Audience sector</label>
+          <div class="form-fake">Banking</div>
+        </div>
+        <div class="form-submit">Building this →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="book" class="book-section">
+  <div class="wrap">
+    <div class="book-cover reveal">
+      <div class="top">SARATH G</div>
+      <div class="mid">Certified and Clueless
+        <span class="sub">From Knowing the Vulnerability to Understanding It</span>
+      </div>
+      <div class="bottom">D · A · R · E</div>
+    </div>
+    <div class="book-text reveal">
+      <div class="kicker">THE BOOK</div>
+      <p class="lede-strong">An argument, built from ten years of training professionals across more than ten countries, that the way the industry teaches security produces a predictable shortfall in genuine understanding.</p>
+      <p>Not a certification guide. Not a collection of attack tutorials. Sixteen chapters covering the reasoning behind DARE, four full worked examples, and what it takes to run this with a room instead of alone.</p>
+      <div class="cta-row" style="margin-bottom:0;">
+        <a href="https://www.sarathg.me" class="btn btn-primary">Find the book</a>
+        <a href="https://www.sarathg.me" class="btn btn-ghost">More about Sarath</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="footer">
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-cta reveal">
+        <h3>Running something that doesn't fit a standard shape?</h3>
+        <p>Custom programmes, multi-day sequences, or a topic that isn't in the library yet. Book thirty minutes, no charge.</p>
+        <a href="https://www.sarathg.me" class="btn btn-primary">Book time with Sarath</a>
+      </div>
+      <div class="foot-qr reveal">
+        <img src="qr-dare.png" alt="QR code linking to dare.sarathg.me">
+        <div class="qr-label"><b>dare.sarathg.me</b>Scan to open this page on your phone.</div>
+      </div>
+    </div>
+    <div class="foot-links reveal">
+      <a href="https://www.sarathg.me">sarathg.me</a>
+      <a href="https://sarathg.medium.com">Medium</a>
+      <a href="https://github.com/secretguard">GitHub</a>
+      <a href="https://www.linkedin.com/in/sarathcybersec">LinkedIn</a>
+      <a href="https://instagram.com/i.sarathg">Instagram</a>
+      <a href="https://labs.sarathg.me">Labs</a>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Sarath G. DARE Framework.</span>
+      <span>dare.sarathg.me</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold:0.15 });
+  revealEls.forEach(el=>io.observe(el));
+
+  // terminal typing sequence, runs once on load
+  const lines = [
+    { html: '<span class="t-prompt">$</span> session --topic sqli --duration 90m', pause: 500 },
+    { html: '', pause: 150 },
+    { html: '<span class="t-stage">[D]</span> <span class="t-dim">deconstruct</span>   scoping the database, the query, the trust boundary', pause: 650 },
+    { html: '<span class="t-stage">[A]</span> <span class="t-dim">attack</span>        sqlmap -u "vulnshop/products/search?q=" --dbs', pause: 550 },
+    { html: '                <span class="t-bad">[+] parameter is vulnerable</span>', pause: 750 },
+    { html: '<span class="t-stage">[R]</span> <span class="t-dim">remediate</span>     same payload, patched build', pause: 550 },
+    { html: '                <span class="t-good">[-] parameter is not vulnerable</span>', pause: 750 },
+    { html: '<span class="t-stage">[E]</span> <span class="t-dim">exchange</span>      reading the logs the attack just left behind', pause: 650 },
+    { html: '                <span class="t-quote">"now I got it."</span>', pause: 0 },
+  ];
+
+  const term = document.getElementById('termBody');
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function renderStatic(){
+    term.innerHTML = lines.map(l=>l.html).join('\n');
+  }
+
+  async function typeSequence(){
+    let out = '';
+    for(const line of lines){
+      out += (out ? '\n' : '') + line.html;
+      term.innerHTML = out + '<span class="cursor"></span>';
+      await new Promise(r=>setTimeout(r, line.pause));
+    }
+    term.innerHTML = out;
+  }
+
+  if(prefersReduced){ renderStatic(); } else { typeSequence(); }
+</script>
+
+</body>
+</html>
