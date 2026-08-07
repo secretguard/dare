@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planning assistant — DARE Framework</title>
+<meta name="description" content="Pick a vulnerability, a sector, and a time budget. Get a DARE session outline assembled from a library of prewritten blocks. No AI, just rules.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0a0e1a; --surface:#121a2c; --surface-2:#171f34; --line:#26304a;
+    --ink:#eef1f7; --ink-dim:#8a93ab; --ink-faint:#4c5570;
+    --amber:#f2a154; --red:#e2554f; --green:#69b98a; --cyan:#4fd8e0;
+    --serif:'Playfair Display', Georgia, serif;
+    --sans:'DM Sans', -apple-system, sans-serif;
+    --mono:'JetBrains Mono', 'Courier New', monospace;
+    --container: 880px;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--void); color:var(--ink); font-family:var(--sans); line-height:1.5; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:var(--container); margin:0 auto; padding:0 24px; }
+  ::selection{ background:var(--amber); color:var(--void); }
+  a:focus-visible, button:focus-visible, select:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; border-radius:2px; }
+
+  /* ---------- nav ---------- */
+  .nav{ position:sticky; top:0; z-index:50; background:rgba(10,14,26,0.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1080px; margin:0 auto; position:relative; }
+  .nav-mark{ font-family:var(--mono); font-weight:600; font-size:14px; letter-spacing:0.08em; color:var(--ink); display:flex; align-items:center; gap:8px; }
+  .nav-mark .dot{ width:7px; height:7px; border-radius:50%; background:var(--amber); box-shadow:0 0 8px var(--amber); }
+  .nav-links{ display:flex; gap:28px; font-family:var(--mono); font-size:12.5px; color:var(--ink-dim); }
+  .nav-links a{ transition:color .2s ease; white-space:nowrap; }
+  .nav-links a:hover{ color:var(--ink); }
+  .nav-links a.active{ color:var(--amber); }
+  .nav-book{ color:var(--amber) !important; }
+  .nav-toggle{ display:none; background:none; border:1px solid var(--line); border-radius:4px; width:34px; height:34px; color:var(--ink); font-family:var(--mono); font-size:16px; cursor:pointer; align-items:center; justify-content:center; }
+  @media (max-width:760px){
+    .nav-links{ display:flex; flex-direction:column; gap:0; position:absolute; top:100%; left:0; right:0; background:var(--void); border-bottom:1px solid var(--line); max-height:0; overflow:hidden; transition:max-height .25s ease; }
+    .nav-links.open{ max-height:320px; }
+    .nav-links a{ padding:14px 24px; border-top:1px solid var(--line); }
+    .nav-toggle{ display:flex; }
+  }
+
+  /* ---------- header ---------- */
+  .page-head{ padding:56px 0 28px; }
+  .eyebrow{ font-family:var(--mono); font-size:11.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:16px; display:block; }
+  .page-head h1{ font-family:var(--serif); font-weight:900; font-size:clamp(30px,4vw,44px); color:var(--ink); margin-bottom:16px; letter-spacing:-0.01em; }
+  .page-head p{ color:var(--ink-dim); font-size:15.5px; line-height:1.75; max-width:64ch; }
+
+  /* ---------- selectors ---------- */
+  .picker{
+    background:var(--surface); border:1px solid var(--line); border-radius:8px;
+    padding:26px; margin:28px 0 40px; display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:16px; align-items:end;
+  }
+  @media (max-width:800px){ .picker{ grid-template-columns:1fr; } }
+  .picker-field label{ display:block; font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px; }
+  .picker-field select{
+    width:100%; background:var(--void); border:1px solid var(--line); border-radius:5px;
+    color:var(--ink); font-family:var(--sans); font-size:14px; padding:12px 13px;
+    appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a93ab'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 14px center; padding-right:34px;
+  }
+  .picker-field select:focus{ border-color:var(--ink-dim); }
+  .btn{ font-family:var(--mono); font-size:13.5px; letter-spacing:0.03em; padding:13px 22px; border-radius:5px; cursor:pointer; transition:all .2s ease; border:1px solid transparent; white-space:nowrap; }
+  .btn-primary{ background:var(--amber); color:var(--void); }
+  .btn-primary:hover{ background:#ffb56b; }
+  .btn-ghost{ border-color:var(--line); color:var(--ink); background:transparent; }
+  .btn-ghost:hover{ border-color:var(--ink-dim); background:var(--surface-2); }
+
+  /* ---------- empty state ---------- */
+  .empty-state{ text-align:center; padding:60px 20px; color:var(--ink-faint); font-family:var(--mono); font-size:13px; }
+
+  /* ---------- fallback ---------- */
+  .fallback{
+    background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--red);
+    border-radius:0 8px 8px 0; padding:30px; margin-bottom:40px;
+  }
+  .fallback h2{ font-family:var(--serif); font-weight:700; font-size:20px; margin-bottom:10px; }
+  .fallback p{ color:var(--ink-dim); font-size:14.5px; line-height:1.7; margin-bottom:18px; max-width:60ch; }
+
+  /* ---------- outline ---------- */
+  .outline-head{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    margin-bottom:24px;
+  }
+  .outline-title h2{ font-family:var(--serif); font-weight:700; font-size:24px; margin-bottom:6px; }
+  .outline-meta{ font-family:var(--mono); font-size:12px; color:var(--ink-faint); }
+  .outline-actions{ display:flex; gap:10px; }
+
+  .outline-scene{
+    background:var(--surface-2); border:1px solid var(--line); border-radius:6px;
+    padding:16px 18px; margin-bottom:28px; font-size:14px; color:var(--ink-dim); line-height:1.7;
+  }
+  .outline-scene b{ color:var(--ink); font-weight:600; }
+
+  .outline-stage{ display:grid; grid-template-columns:110px 1fr; gap:24px; padding:26px 0; border-top:1px solid var(--line); }
+  .outline-stage:first-of-type{ border-top:none; }
+  .os-label{ display:flex; flex-direction:column; gap:6px; }
+  .os-letter{ font-family:var(--serif); font-weight:900; font-size:32px; line-height:1; }
+  .osD .os-letter{ color:var(--amber); } .osA .os-letter{ color:var(--red); }
+  .osR .os-letter{ color:var(--green); } .osE .os-letter{ color:var(--cyan); }
+  .os-time{ font-family:var(--mono); font-size:11px; color:var(--ink-faint); }
+  .outline-stage h3{ font-family:var(--sans); font-weight:700; font-size:16px; margin-bottom:8px; }
+  .outline-stage p{ color:var(--ink-dim); font-size:14.5px; line-height:1.75; max-width:62ch; }
+
+  @media (max-width:640px){ .outline-stage{ grid-template-columns:1fr; gap:8px; } }
+
+  footer{ padding:56px 0 64px; border-top:1px solid var(--line); margin-top:20px; }
+  .foot-links{ display:flex; justify-content:center; gap:22px; flex-wrap:wrap; font-family:var(--mono); font-size:11.5px; color:var(--ink-dim); margin-bottom:22px; }
+  .foot-links a:hover{ color:var(--ink); }
+  .bottom-note{ text-align:center; font-family:var(--mono); font-size:11px; color:var(--ink-faint); }
+
+  @media print{
+    body{ background:#fff; color:#111; }
+    .nav, .picker, footer, .outline-actions{ display:none !important; }
+    .wrap{ max-width:100%; padding:0; }
+    .outline-title h2, .outline-stage h3{ color:#111; }
+    .outline-meta, .os-time{ color:#555; }
+    .outline-scene{ background:#f3f3f3; border-color:#999; color:#222; }
+    .outline-scene b{ color:#111; }
+    .outline-stage p{ color:#222; }
+    .outline-stage{ border-top:1px solid #999; page-break-inside:avoid; }
+    .os-letter{ color:#111 !important; -webkit-print-color-adjust:exact; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-mark"><span class="dot"></span>DARE</a>
+    <div class="nav-links" id="navLinks">
+      <a href="worksheets.html">Worksheets</a>
+      <a href="use-cases.html">Use cases</a>
+      <a href="https://labs.sarathg.me">Environments</a>
+      <a href="planning-assistant.html" class="active">Planning assistant</a>
+      <a href="https://www.sarathg.me" class="nav-book">The book</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">&#9776;</button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div class="page-head">
+    <span class="eyebrow">For trainers building a session</span>
+    <h1>Planning assistant</h1>
+    <p>Pick a vulnerability, a sector, and how much time you have. This assembles a session outline from a library of blocks I've written and tested, not from a model guessing what a good session looks like. If a combination isn't in the library yet, it says so and points you to me directly instead of inventing something.</p>
+  </div>
+
+  <div class="picker">
+    <div class="picker-field">
+      <label for="topicSelect">Vulnerability</label>
+      <select id="topicSelect">
+        <option value="">Choose a topic</option>
+        <option value="sqli">SQL injection</option>
+        <option value="ratelimit">No rate limiting</option>
+        <option value="idor">IDOR</option>
+        <option value="xss">Stored XSS</option>
+      </select>
+    </div>
+    <div class="picker-field">
+      <label for="sectorSelect">Sector</label>
+      <select id="sectorSelect">
+        <option value="">Choose a sector</option>
+        <option value="banking">Banking</option>
+        <option value="government">Government</option>
+        <option value="generic">Generic / e-commerce</option>
+        <option value="healthcare">Healthcare</option>
+        <option value="defence">Defence</option>
+      </select>
+    </div>
+    <div class="picker-field">
+      <label for="timeSelect">Time budget</label>
+      <select id="timeSelect">
+        <option value="">Choose a length</option>
+        <option value="full">Full session</option>
+        <option value="compressed">Compressed (~90 min)</option>
+      </select>
+    </div>
+    <button class="btn btn-primary" id="buildBtn">Build outline</button>
+  </div>
+
+  <div id="resultArea">
+    <div class="empty-state">Pick a vulnerability, a sector, and a time budget, then build the outline.</div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-links">
+      <a href="https://www.sarathg.me">The book</a>
+      <a href="https://labs.sarathg.me">Environments</a>
+      <a href="https://sarathg.medium.com">Medium</a>
+      <a href="https://github.com/secretguard">GitHub</a>
+      <a href="https://www.linkedin.com/in/sarathcybersec">LinkedIn</a>
+    </div>
+    <p class="bottom-note">dare.sarathg.me &nbsp;&middot;&nbsp; a design constraint, not a curriculum</p>
+  </div>
+</footer>
+
+<script>
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }));
+
+  // ---------- library ----------
+  // Rules-based content library. No AI, no generation: every string below is
+  // authored content, selected by topic + sector + time budget.
+  const BOOKING_LINK = 'https://www.sarathg.me';
+  const COVERED_SECTORS = ['banking', 'government', 'generic'];
+
+  const TIME = {
+    full:       { deconstruct: 15, attack: 60, remediate: 20, exchange: 45, label: 'Full session (~2h20)' },
+    compressed: { deconstruct: 8,  attack: 45, remediate: 12, exchange: 20, label: 'Compressed (~90 min)' }
+  };
+
+  const LIBRARY = {
+    sqli: {
+      label: 'SQL injection',
+      sectors: {
+        banking:    { scene: "a retail banking portal's transaction search, querying customer account records directly", stakes: "for a bank, that log line is account numbers and balances, not product names" },
+        government: { scene: "a citizen services portal's record lookup, querying a database of resident records", stakes: "for a government system, that log line is a resident's national ID and address, not a shopping cart" },
+        generic:    { scene: "VulnShop's product search, querying the catalog table straight from the search box", stakes: "for an e-commerce app it's product names in the log, but the same query could just as easily reach the customer table" }
+      },
+      stages: {
+        deconstruct: {
+          full: "Make sure the learner can explain, in their own words, what a database query is and how their input becomes part of that query instead of staying separate from it. Sketch it as one string: fixed code plus whatever they typed, sent to the database as-is. By the end of this stage they should be asking what happens if their input stops behaving like plain text.",
+          compressed: "A fast version of the same idea: input and query become one string. Sketch it on the board in under two minutes and move on."
+        },
+        attack: {
+          full: "Demonstrate the injection once, narrating what changes in the result set. The learner repeats it on the same target, then moves to an independent target where the vulnerable field is different, so copying the exact string does nothing. Success looks like explaining why the query broke, not just that it did.",
+          compressed: "One demonstration, one guided repeat on the same target. Skip the independent target if time is this tight, but still ask the learner to explain what happened before moving on."
+        },
+        remediate: {
+          full: "The only change is that the query is now parameterized instead of built from concatenated strings. Same input, same field, and it returns nothing unusual. Say clearly that this is the application working as intended.",
+          compressed: "A single side-by-side comparison of the vulnerable and patched query, then one re-run of the attack against the patched version."
+        },
+        exchange: {
+          full: "Pull the request logs generated by the learner's own attack and let them look before explaining anything. What becomes visible is how much of the injected syntax shows up in plain text in a single log line, which is usually not what learners expect an attack to look like from the other side.",
+          compressed: "A shortened version using a pre-captured log snippet instead of live logs, with the same question: what do you notice before I explain it?"
+        }
+      }
+    },
+    ratelimit: {
+      label: 'No rate limiting',
+      sectors: {
+        banking:    { scene: "a banking portal's login form, with no attempt limit before granting access to account details", stakes: "for a bank, an unlocked login form is direct access to someone's money, not a shopping account" },
+        government: { scene: "a government portal's login form for a citizen services account", stakes: "for a government system, that's access to someone's benefits, tax, or identity records" },
+        generic:    { scene: "VulnShop's login form, tested with Burp Suite's Intruder against a common password list", stakes: "for an e-commerce app it's a customer account and any stored payment methods" }
+      },
+      stages: {
+        deconstruct: {
+          full: "The learner needs to understand what a login request is, a small package of credentials sent to a server, and what an automated tool does to it: replaying that package with a different guess each time, as fast as the server allows. Demo one manual login first, then show the same request captured in a proxy tool, so the jump to repeating it a thousand times makes sense.",
+          compressed: "A quick look at one captured login request in a proxy tool, skipping the manual walkthrough."
+        },
+        attack: {
+          full: "Run an automated attempt against the login form with a common password list, narrating what signals a hit: response length or status code changing. The learner repeats it against the same form, then an independent target, for example a password reset endpoint instead of login, so they recognize the pattern rather than replay a saved attack.",
+          compressed: "One automated run, narrated, with the learner watching for the same signal. No independent target."
+        },
+        remediate: {
+          full: "The one change is a lockout or delay after a small number of failed attempts. Same wordlist, same attack, and it now stalls or locks the account well before completion.",
+          compressed: "A single re-run of the same attack against the patched login, and a look at where it stalls."
+        },
+        exchange: {
+          full: "The logs show a burst of failed login attempts from one source within seconds, an obvious pattern once you're looking at it from the server's side. Ask the learner what they notice about the timing before saying anything.",
+          compressed: "A pre-captured log excerpt showing the same burst pattern, with the same question asked first."
+        }
+      }
+    },
+    idor: {
+      label: 'IDOR',
+      sectors: {
+        banking:    { scene: "a banking portal's statement viewer, referencing a sequential statement or transaction ID", stakes: "for a bank, incrementing that ID walks through other customers' financial records" },
+        government: { scene: "a government portal's case or application lookup, referencing a sequential case ID", stakes: "for a government system, incrementing that ID exposes other citizens' case files" },
+        generic:    { scene: "VulnShop's order history page, referencing a sequential order ID", stakes: "for an e-commerce app it's someone else's order and shipping address" }
+      },
+      stages: {
+        deconstruct: {
+          full: "The learner needs to understand what an object reference is: a URL parameter, like an order ID, that points directly at a specific record. Show them a real URL and ask what they think happens if that number changes. That question is the point of this stage.",
+          compressed: "The same URL, the same question, without the longer walkthrough of how the parameter maps to a database row."
+        },
+        attack: {
+          full: "Change the ID in the URL once and show a different record appear. The learner repeats it on the same target, then moves to an independent target with a different ID pattern, so they recognize that the same idea applies somewhere new.",
+          compressed: "One demonstration and one guided repeat on the same target only."
+        },
+        remediate: {
+          full: "The one change is a server-side check that the record being requested actually belongs to the session asking for it. Same incremented ID, and it now returns a not-found or access-denied response instead of someone else's data.",
+          compressed: "A single re-run of the same ID change against the patched version, with the ownership check pointed out directly."
+        },
+        exchange: {
+          full: "The logs show a session requesting a sequence of IDs that don't belong to it, a very identifiable pattern from the server side. Let the learner look at that request sequence before explaining what makes it stand out.",
+          compressed: "A shortened look at the same request sequence from a pre-captured log."
+        }
+      }
+    },
+    xss: {
+      label: 'Stored XSS',
+      sectors: {
+        banking:    { scene: "a banking portal's support message field, stored and rendered back to staff who review it", stakes: "for a bank, that's a session cookie for a staff account with access to customer records" },
+        government: { scene: "a government portal's public comment or complaint field, stored and rendered back to staff", stakes: "for a government system, that's a staff session with access to citizen data" },
+        generic:    { scene: "VulnShop's product review field, stored and rendered back to every visitor who views the product", stakes: "for an e-commerce app it's a customer's session cookie, and at scale, everyone who views that product page" }
+      },
+      stages: {
+        deconstruct: {
+          full: "The learner needs a working sense of what JavaScript can do inside a browser and what a session cookie is worth to someone who steals it. Sketch the flow of input gets stored, then rendered back to whoever views this page, the piece that makes stored XSS click before anyone has written a payload.",
+          compressed: "The same sketch, compressed to one sentence: whatever gets stored here gets rendered back to the next person who loads this page."
+        },
+        attack: {
+          full: "Post a payload that sends the viewing browser's cookie to a listener, then show that cookie arrive when a second, victim session opens the page. The learner repeats it, then moves to an independent target, for example a profile bio field instead of a review, so they recognize the pattern rather than reuse the exact payload.",
+          compressed: "One demonstration of the stored payload firing against a single victim session, no independent target."
+        },
+        remediate: {
+          full: "The one change is that stored input is now encoded before it's rendered back into the page. The same payload appears on screen as plain, inert text instead of executing.",
+          compressed: "A side-by-side look at the same input rendering as text instead of executing, on the patched version."
+        },
+        exchange: {
+          full: "The evidence is the listener's own log: a request arriving from the victim's browser carrying their exact cookie value. Let the learner sit with that for a second before explaining it, usually the first time they've seen their own payload work from outside their own browser.",
+          compressed: "A pre-captured version of the same listener log, with the same pause before explaining it."
+        }
+      }
+    }
+  };
+
+  const SECTOR_LABEL = { banking: 'Banking', government: 'Government', generic: 'Generic / e-commerce', healthcare: 'Healthcare', defence: 'Defence' };
+
+  function renderFallback(topic, sector){
+    const area = document.getElementById('resultArea');
+    const topicLabel = topic && LIBRARY[topic] ? LIBRARY[topic].label : 'that vulnerability';
+    const sectorLabel = sector ? (SECTOR_LABEL[sector] || sector) : 'that sector';
+    area.innerHTML = `
+      <div class="fallback">
+        <h2>This combination isn't in the library yet</h2>
+        <p>I haven't written ${sectorLabel} framing for ${topicLabel} sessions yet, and I'm not going to generate one on the fly. That's a deliberate choice: every block in this tool is content I've actually run in a session, not a guess. Reach out directly and I'll help you plan this one.</p>
+        <a href="${BOOKING_LINK}" class="btn btn-primary">Get in touch</a>
+      </div>
+    `;
+  }
+
+  function renderOutline(topic, sector, time){
+    const block = LIBRARY[topic];
+    const sec = block.sectors[sector];
+    const t = TIME[time];
+    const area = document.getElementById('resultArea');
+
+    const stageMeta = [
+      { key: 'deconstruct', letter: 'D', name: 'Deconstruct', cls: 'osD', minutes: t.deconstruct },
+      { key: 'attack',      letter: 'A', name: 'Attack',      cls: 'osA', minutes: t.attack },
+      { key: 'remediate',   letter: 'R', name: 'Remediate',   cls: 'osR', minutes: t.remediate },
+      { key: 'exchange',    letter: 'E', name: 'Exchange',    cls: 'osE', minutes: t.exchange }
+    ];
+
+    const stagesHtml = stageMeta.map(s => `
+      <div class="outline-stage ${s.cls}">
+        <div class="os-label">
+          <span class="os-letter">${s.letter}</span>
+          <span class="os-time">${s.minutes} min</span>
+        </div>
+        <div>
+          <h3>${s.name}</h3>
+          <p>${block.stages[s.key][time]}</p>
+        </div>
+      </div>
+    `).join('');
+
+    const totalMinutes = stageMeta.reduce((sum, s) => sum + s.minutes, 0);
+
+    area.innerHTML = `
+      <div class="outline-head">
+        <div class="outline-title">
+          <h2>${block.label} &middot; ${SECTOR_LABEL[sector]}</h2>
+          <div class="outline-meta">${t.label} &middot; about ${totalMinutes} minutes total</div>
+        </div>
+        <div class="outline-actions">
+          <button class="btn btn-ghost" id="printOutlineBtn">Print</button>
+          <button class="btn btn-ghost" id="copyOutlineBtn">Copy text</button>
+        </div>
+      </div>
+      <div class="outline-scene">Session runs against <b>${sec.scene}</b>. ${sec.stakes.charAt(0).toUpperCase() + sec.stakes.slice(1)}.</div>
+      ${stagesHtml}
+    `;
+
+    document.getElementById('printOutlineBtn').addEventListener('click', () => window.print());
+    document.getElementById('copyOutlineBtn').addEventListener('click', () => {
+      const lines = [`${block.label} — ${SECTOR_LABEL[sector]} — ${t.label}`, '', `Scene: ${sec.scene}. ${sec.stakes}.`, ''];
+      stageMeta.forEach(s => {
+        lines.push(`${s.name} (${s.minutes} min)`);
+        lines.push(block.stages[s.key][time]);
+        lines.push('');
+      });
+      const text = lines.join('\n');
+      const btn = document.getElementById('copyOutlineBtn');
+      navigator.clipboard.writeText(text).then(() => {
+        const original = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(() => { btn.textContent = original; }, 1800);
+      }).catch(() => {
+        btn.textContent = 'Copy failed, select manually';
+      });
+    });
+  }
+
+  document.getElementById('buildBtn').addEventListener('click', () => {
+    const topic = document.getElementById('topicSelect').value;
+    const sector = document.getElementById('sectorSelect').value;
+    const time = document.getElementById('timeSelect').value;
+    const area = document.getElementById('resultArea');
+
+    if(!topic || !sector || !time){
+      area.innerHTML = '<div class="empty-state">Pick a vulnerability, a sector, and a time budget, then build the outline.</div>';
+      return;
+    }
+
+    if(!LIBRARY[topic] || !COVERED_SECTORS.includes(sector)){
+      renderFallback(topic, sector);
+      return;
+    }
+
+    renderOutline(topic, sector, time);
+  });
+</script>
+
+</body>
+</html>

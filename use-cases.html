@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Use cases — DARE Framework</title>
+<meta name="description" content="Four vulnerability classes walked through the DARE Framework stage by stage: SQL injection, no rate limiting, IDOR, and stored XSS, using VulnShop as the target.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0a0e1a; --surface:#121a2c; --surface-2:#171f34; --line:#26304a;
+    --ink:#eef1f7; --ink-dim:#8a93ab; --ink-faint:#4c5570;
+    --amber:#f2a154; --red:#e2554f; --green:#69b98a; --cyan:#4fd8e0;
+    --serif:'Playfair Display', Georgia, serif;
+    --sans:'DM Sans', -apple-system, sans-serif;
+    --mono:'JetBrains Mono', 'Courier New', monospace;
+    --container: 880px;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--void); color:var(--ink); font-family:var(--sans); line-height:1.5; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:var(--container); margin:0 auto; padding:0 24px; }
+  ::selection{ background:var(--amber); color:var(--void); }
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; border-radius:2px; }
+
+  /* ---------- nav ---------- */
+  .nav{ position:sticky; top:0; z-index:50; background:rgba(10,14,26,0.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1080px; margin:0 auto; position:relative; }
+  .nav-mark{ font-family:var(--mono); font-weight:600; font-size:14px; letter-spacing:0.08em; color:var(--ink); display:flex; align-items:center; gap:8px; }
+  .nav-mark .dot{ width:7px; height:7px; border-radius:50%; background:var(--amber); box-shadow:0 0 8px var(--amber); }
+  .nav-links{ display:flex; gap:28px; font-family:var(--mono); font-size:12.5px; color:var(--ink-dim); }
+  .nav-links a{ transition:color .2s ease; white-space:nowrap; }
+  .nav-links a:hover{ color:var(--ink); }
+  .nav-links a.active{ color:var(--amber); }
+  .nav-book{ color:var(--amber) !important; }
+  .nav-toggle{ display:none; background:none; border:1px solid var(--line); border-radius:4px; width:34px; height:34px; color:var(--ink); font-family:var(--mono); font-size:16px; cursor:pointer; align-items:center; justify-content:center; }
+  @media (max-width:760px){
+    .nav-links{ display:flex; flex-direction:column; gap:0; position:absolute; top:100%; left:0; right:0; background:var(--void); border-bottom:1px solid var(--line); max-height:0; overflow:hidden; transition:max-height .25s ease; }
+    .nav-links.open{ max-height:320px; }
+    .nav-links a{ padding:14px 24px; border-top:1px solid var(--line); }
+    .nav-toggle{ display:flex; }
+  }
+
+  /* ---------- header ---------- */
+  .page-head{ padding:56px 0 24px; }
+  .eyebrow{ font-family:var(--mono); font-size:11.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:16px; display:block; }
+  .page-head h1{ font-family:var(--serif); font-weight:900; font-size:clamp(30px,4vw,44px); color:var(--ink); margin-bottom:16px; letter-spacing:-0.01em; }
+  .page-head p{ color:var(--ink-dim); font-size:15.5px; line-height:1.75; max-width:64ch; margin-bottom:14px; }
+
+  /* ---------- jump nav ---------- */
+  .jump-nav{ display:flex; gap:10px; flex-wrap:wrap; padding:24px 0 48px; }
+  .jump-chip{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.02em; color:var(--ink-dim);
+    border:1px solid var(--line); border-radius:20px; padding:8px 16px; transition:all .2s ease;
+  }
+  .jump-chip:hover{ border-color:var(--ink-dim); color:var(--ink); }
+  .jump-chip .n{ font-weight:600; margin-right:6px; }
+  .jump-chip.jcA .n{ color:var(--red); } .jump-chip.jcB .n{ color:var(--amber); }
+  .jump-chip.jcC .n{ color:var(--green); } .jump-chip.jcD .n{ color:var(--cyan); }
+
+  /* ---------- use case ---------- */
+  .usecase{ padding:52px 0; border-top:1px solid var(--line); }
+  .usecase:first-of-type{ border-top:none; }
+  .uc-eyebrow{ font-family:var(--mono); font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:10px; }
+  .usecase h2{ font-family:var(--serif); font-weight:700; font-size:clamp(24px,3vw,32px); margin-bottom:16px; }
+  .uc-scene{ color:var(--ink-dim); font-size:15.5px; line-height:1.75; max-width:66ch; margin-bottom:36px; }
+  .uc-scene em{ color:var(--ink); font-style:normal; font-family:var(--mono); font-size:14px; }
+
+  .uc-stage{ display:grid; grid-template-columns:110px 1fr; gap:24px; padding:22px 0; border-top:1px solid var(--line); }
+  .uc-stage:first-of-type{ border-top:none; }
+  .uc-stage-label{ display:flex; align-items:baseline; gap:8px; }
+  .uc-stage-letter{ font-family:var(--serif); font-weight:900; font-size:28px; line-height:1; }
+  .uc-stage-name{ font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-faint); }
+  .stD .uc-stage-letter{ color:var(--amber); } .stA .uc-stage-letter{ color:var(--red); }
+  .stR .uc-stage-letter{ color:var(--green); } .stE .uc-stage-letter{ color:var(--cyan); }
+  .uc-stage p{ color:var(--ink-dim); font-size:14.5px; line-height:1.75; max-width:62ch; }
+  .uc-stage.stE{ background:linear-gradient(90deg, rgba(79,216,224,0.06), transparent); border-radius:6px; padding-left:14px; padding-right:14px; margin-left:-14px; margin-right:-14px; }
+  .uc-stage.stE p{ color:var(--ink); }
+
+  @media (max-width:640px){
+    .uc-stage{ grid-template-columns:1fr; gap:8px; }
+  }
+
+  .uc-close{
+    margin-top:8px; font-family:var(--mono); font-size:12.5px; color:var(--ink-faint);
+    border-top:1px solid var(--line); padding-top:18px;
+  }
+  .uc-close a{ color:var(--amber); }
+  .uc-close a:hover{ text-decoration:underline; }
+
+  /* ---------- closing cta ---------- */
+  .cta-band{
+    text-align:center; padding:64px 0 80px; border-top:1px solid var(--line);
+  }
+  .cta-band h2{ font-family:var(--serif); font-weight:700; font-size:clamp(22px,3vw,30px); margin-bottom:14px; }
+  .cta-band p{ color:var(--ink-dim); font-size:15px; max-width:52ch; margin:0 auto 26px; line-height:1.7; }
+  .cta-row{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .btn{ font-family:var(--mono); font-size:13.5px; letter-spacing:0.03em; padding:14px 24px; border-radius:3px; cursor:pointer; transition:all .2s ease; display:inline-flex; align-items:center; gap:8px; border:1px solid transparent; }
+  .btn-primary{ background:var(--amber); color:var(--void); }
+  .btn-primary:hover{ background:#ffb56b; transform:translateY(-1px); }
+  .btn-ghost{ border-color:var(--line); color:var(--ink); background:transparent; }
+  .btn-ghost:hover{ border-color:var(--ink-dim); background:var(--surface); }
+
+  footer{ padding:56px 0 64px; border-top:1px solid var(--line); }
+  .foot-links{ display:flex; justify-content:center; gap:22px; flex-wrap:wrap; font-family:var(--mono); font-size:11.5px; color:var(--ink-dim); margin-bottom:22px; }
+  .foot-links a:hover{ color:var(--ink); }
+  .bottom-note{ text-align:center; font-family:var(--mono); font-size:11px; color:var(--ink-faint); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-mark"><span class="dot"></span>DARE</a>
+    <div class="nav-links" id="navLinks">
+      <a href="worksheets.html">Worksheets</a>
+      <a href="use-cases.html" class="active">Use cases</a>
+      <a href="https://labs.sarathg.me">Environments</a>
+      <a href="planning-assistant.html">Planning assistant</a>
+      <a href="https://www.sarathg.me" class="nav-book">The book</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">&#9776;</button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div class="page-head">
+    <span class="eyebrow">Four sessions, one target app</span>
+    <h1>Use cases</h1>
+    <p>These are four vulnerability classes run through DARE against the same target, VulnShop, a deliberately vulnerable e-commerce app I use in training. Each one follows the same arc: understand the system, break it, watch it get fixed, then see the break from the other side.</p>
+  </div>
+
+  <nav class="jump-nav" aria-label="Jump to a use case">
+    <a href="#sqli" class="jump-chip jcA"><span class="n">01</span>SQL injection</a>
+    <a href="#ratelimit" class="jump-chip jcB"><span class="n">02</span>No rate limiting</a>
+    <a href="#idor" class="jump-chip jcC"><span class="n">03</span>IDOR</a>
+    <a href="#xss" class="jump-chip jcD"><span class="n">04</span>Stored XSS</a>
+  </nav>
+
+  <article class="usecase" id="sqli">
+    <div class="uc-eyebrow">Use case 01</div>
+    <h2>SQL injection, in the search box</h2>
+    <p class="uc-scene">VulnShop's product search takes whatever a shopper types and drops it straight into a database query. No parameterization, no escaping. The vulnerable field is <em>the search box on the homepage</em>, which is about as ordinary as an input field gets, and that's the point.</p>
+
+    <div class="uc-stage stD">
+      <div class="uc-stage-label"><span class="uc-stage-letter">D</span><span class="uc-stage-name">Deconstruct</span></div>
+      <p>Before any injection happens, the learner needs to be able to explain what a database query actually is and how their search term becomes part of the command sent to the database, rather than staying separate from it. I sketch it as one string: the app's fixed code plus whatever the shopper typed, concatenated together and executed as-is. By the end of this stage the learner should be asking themselves what happens if the text they type stops behaving like text.</p>
+    </div>
+    <div class="uc-stage stA">
+      <div class="uc-stage-label"><span class="uc-stage-letter">A</span><span class="uc-stage-name">Attack</span></div>
+      <p>I type <span style="font-family:var(--mono);color:var(--ink);">' OR '1'='1</span> into the search box and the result set jumps from a handful of matching products to the entire catalog, including items that were never meant to be listed. The learner repeats this on the same target, then moves to an independent target where the injectable field is different, the account settings page instead of search, so copying my exact string does nothing. A learner who understood Deconstruct can explain why the quote character breaks the query. One who didn't can only tell you that the string worked.</p>
+    </div>
+    <div class="uc-stage stR">
+      <div class="uc-stage-label"><span class="uc-stage-letter">R</span><span class="uc-stage-name">Remediate</span></div>
+      <p>The one and only change in the patched version is that the query is now parameterized, the search term is passed as data instead of being pasted into the command. Same search box, same payload, and it now returns zero results, exactly like searching for a product that doesn't exist. That is the correct behavior, and I say so directly.</p>
+    </div>
+    <div class="uc-stage stE">
+      <div class="uc-stage-label"><span class="uc-stage-letter">E</span><span class="uc-stage-name">Exchange</span></div>
+      <p>I pull up the request log generated by the learner's own search and let them read it before I explain anything. What jumps out is how plainly the injected syntax sits there in a single log line, quote marks and all, next to a thousand ordinary searches for shoes and phone cases. Most learners expect an attack to look more deliberate from the defender's side. Seeing it as one slightly odd-looking line in a wall of normal traffic is usually the moment this stage is built for.</p>
+    </div>
+
+    <p class="uc-close">Want the worksheet for this one? <a href="worksheets.html">Fill it in here</a>, or see how this maps to a full session plan in the <a href="planning-assistant.html">planning assistant</a>.</p>
+  </article>
+
+  <article class="usecase" id="ratelimit">
+    <div class="uc-eyebrow">Use case 02</div>
+    <h2>No rate limiting, on the login form</h2>
+    <p class="uc-scene">VulnShop's login form accepts as many attempts as you want to throw at it, no delay, no lockout, no captcha after a threshold. The target is <em>the login form</em>, tested with Burp Suite's Intruder against a list of common passwords.</p>
+
+    <div class="uc-stage stD">
+      <div class="uc-stage-label"><span class="uc-stage-letter">D</span><span class="uc-stage-name">Deconstruct</span></div>
+      <p>The learner needs to understand what a login request actually is, a small package of credentials sent to a server, and what a tool like Intruder does to it: replaying that package with a different guess in the password field each time, as fast as the server allows. I usually capture one manual login first and show the same request sitting in Burp, so the jump from "one login" to "a thousand automated logins" is visible rather than abstract.</p>
+    </div>
+    <div class="uc-stage stA">
+      <div class="uc-stage-label"><span class="uc-stage-letter">A</span><span class="uc-stage-name">Attack</span></div>
+      <p>I run Intruder against the login form with a common password list and narrate what I'm watching for, a response that's a different length or status code than all the failed attempts around it. The learner repeats the run, then moves to an independent target, the password reset form instead of login, which takes the same unlimited-attempts idea and applies it somewhere they haven't seen it demonstrated. That's what separates recognizing the pattern from replaying a recording.</p>
+    </div>
+    <div class="uc-stage stR">
+      <div class="uc-stage-label"><span class="uc-stage-letter">R</span><span class="uc-stage-name">Remediate</span></div>
+      <p>The single change is a lockout after a small number of failed attempts from the same account. Same password list, same Intruder run, and it now stalls a few attempts in, well short of the real password. I point at exactly where it stops and explain that this is the account protecting itself.</p>
+    </div>
+    <div class="uc-stage stE">
+      <div class="uc-stage-label"><span class="uc-stage-letter">E</span><span class="uc-stage-name">Exchange</span></div>
+      <p>The evidence here is loud in a way SQL injection isn't: a burst of failed login attempts from a single source, landing within seconds of each other. I show the learner the raw timing between requests before saying a word. It's usually the first time they've thought about how obviously mechanical automated traffic looks once you're the one watching it arrive.</p>
+    </div>
+
+    <p class="uc-close">Want the worksheet for this one? <a href="worksheets.html">Fill it in here</a>, or see how this maps to a full session plan in the <a href="planning-assistant.html">planning assistant</a>.</p>
+  </article>
+
+  <article class="usecase" id="idor">
+    <div class="uc-eyebrow">Use case 03</div>
+    <h2>IDOR, in the order history</h2>
+    <p class="uc-scene">VulnShop's order confirmation page loads an order by its ID straight from the URL, and never checks whether the order belongs to whoever is asking. The target is <em>the order history page</em>, where order IDs are sequential integers.</p>
+
+    <div class="uc-stage stD">
+      <div class="uc-stage-label"><span class="uc-stage-letter">D</span><span class="uc-stage-name">Deconstruct</span></div>
+      <p>Before touching anything, the learner needs to understand what an object reference is, a value in a URL, like an order ID, that points directly at a specific record on the server. I show them a real order URL and ask what they think happens if that number changes. That question is the entire point of this stage, and I don't answer it for them yet.</p>
+    </div>
+    <div class="uc-stage stA">
+      <div class="uc-stage-label"><span class="uc-stage-letter">A</span><span class="uc-stage-name">Attack</span></div>
+      <p>I change the order ID in the URL by one and a different customer's order appears, full name, address, items purchased. The learner repeats it on the same target, then moves to an independent target with a different ID pattern, account settings instead of orders, so they have to recognize that "sequential ID, no ownership check" is the actual vulnerability, not "this one URL."</p>
+    </div>
+    <div class="uc-stage stR">
+      <div class="uc-stage-label"><span class="uc-stage-letter">R</span><span class="uc-stage-name">Remediate</span></div>
+      <p>The one change is a server-side check that the requested order actually belongs to the session asking for it. Same incremented ID, same request, and it now returns a not-found response instead of someone else's data. I make the point that the ID being guessable was never the real problem, the missing check was.</p>
+    </div>
+    <div class="uc-stage stE">
+      <div class="uc-stage-label"><span class="uc-stage-letter">E</span><span class="uc-stage-name">Exchange</span></div>
+      <p>The logs show a single session requesting a run of sequential order IDs that don't belong to it, one after another. Laid out in a request log, that pattern is about as subtle as a shopping cart on fire. I ask the learner to describe what they see before I point out what makes it stand out, and by then most of them have already spotted it themselves.</p>
+    </div>
+
+    <p class="uc-close">Want the worksheet for this one? <a href="worksheets.html">Fill it in here</a>, or see how this maps to a full session plan in the <a href="planning-assistant.html">planning assistant</a>.</p>
+  </article>
+
+  <article class="usecase" id="xss">
+    <div class="uc-eyebrow">Use case 04</div>
+    <h2>Stored XSS, in a product review</h2>
+    <p class="uc-scene">VulnShop lets shoppers leave a written review under any product, and renders that text back to every visitor who views the page without encoding it first. The target is <em>the product review field</em>, and the payoff is a stolen session cookie.</p>
+
+    <div class="uc-stage stD">
+      <div class="uc-stage-label"><span class="uc-stage-letter">D</span><span class="uc-stage-name">Deconstruct</span></div>
+      <p>The learner needs a working sense of two things: what JavaScript running in someone else's browser can actually do, and what a session cookie is worth to someone who gets hold of it. I sketch the flow as one sentence: whatever gets stored in this field gets rendered back to the next person who loads this page. That sentence is what makes stored XSS click before anyone has written a payload.</p>
+    </div>
+    <div class="uc-stage stA">
+      <div class="uc-stage-label"><span class="uc-stage-letter">A</span><span class="uc-stage-name">Attack</span></div>
+      <p>I post a review containing a script that sends the viewing browser's cookie to a listener I control, then open the product page in a second, victim browser session and watch that cookie arrive. The learner repeats it, then moves to an independent target, a profile bio field instead of a review, so they have to recognize "stored input, rendered unescaped" as the pattern rather than reuse my exact payload.</p>
+    </div>
+    <div class="uc-stage stR">
+      <div class="uc-stage-label"><span class="uc-stage-letter">R</span><span class="uc-stage-name">Remediate</span></div>
+      <p>The one change is that stored input is now encoded before it's rendered back into the page. The same review, posted the same way, now shows up on screen as plain, inert text, angle brackets and all, instead of running as code. I point out that the review still saved successfully, it just isn't allowed to act like a program anymore.</p>
+    </div>
+    <div class="uc-stage stE">
+      <div class="uc-stage-label"><span class="uc-stage-letter">E</span><span class="uc-stage-name">Exchange</span></div>
+      <p>The evidence is the listener's own log: a request arriving from the victim's browser, carrying their exact cookie value, timestamped to the second they loaded the product page. I let the learner sit with that before explaining it, because it's usually the first time they've seen their own payload act on a browser that isn't theirs.</p>
+    </div>
+
+    <p class="uc-close">Want the worksheet for this one? <a href="worksheets.html">Fill it in here</a>, or see how this maps to a full session plan in the <a href="planning-assistant.html">planning assistant</a>.</p>
+  </article>
+
+  <div class="cta-band">
+    <h2>These four are a starting point, not the whole book.</h2>
+    <p>Certified and Clueless walks through each of these in more depth, plus how I run the framework end to end for a live audience.</p>
+    <div class="cta-row">
+      <a href="https://www.sarathg.me" class="btn btn-primary">Get the book</a>
+      <a href="planning-assistant.html" class="btn btn-ghost">Plan a session</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-links">
+      <a href="https://www.sarathg.me">The book</a>
+      <a href="https://labs.sarathg.me">Environments</a>
+      <a href="https://sarathg.medium.com">Medium</a>
+      <a href="https://github.com/secretguard">GitHub</a>
+      <a href="https://www.linkedin.com/in/sarathcybersec">LinkedIn</a>
+    </div>
+    <p class="bottom-note">dare.sarathg.me &nbsp;&middot;&nbsp; a design constraint, not a curriculum</p>
+  </div>
+</footer>
+
+<script>
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }));
+</script>
+
+</body>
+</html>

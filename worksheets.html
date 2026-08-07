@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Worksheets — DARE Framework</title>
+<meta name="description" content="A fillable session-planning worksheet for trainers running a DARE session on any vulnerability. Saves in your browser, prints clean.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0a0e1a; --surface:#121a2c; --surface-2:#171f34; --line:#26304a;
+    --ink:#eef1f7; --ink-dim:#8a93ab; --ink-faint:#4c5570;
+    --amber:#f2a154; --red:#e2554f; --green:#69b98a; --cyan:#4fd8e0;
+    --serif:'Playfair Display', Georgia, serif;
+    --sans:'DM Sans', -apple-system, sans-serif;
+    --mono:'JetBrains Mono', 'Courier New', monospace;
+    --container: 880px;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--void); color:var(--ink); font-family:var(--sans); line-height:1.5; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:var(--container); margin:0 auto; padding:0 24px; }
+  ::selection{ background:var(--amber); color:var(--void); }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+    outline:2px solid var(--amber); outline-offset:2px; border-radius:2px;
+  }
+
+  /* ---------- nav ---------- */
+  .nav{ position:sticky; top:0; z-index:50; background:rgba(10,14,26,0.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1080px; margin:0 auto; position:relative; }
+  .nav-mark{ font-family:var(--mono); font-weight:600; font-size:14px; letter-spacing:0.08em; color:var(--ink); display:flex; align-items:center; gap:8px; }
+  .nav-mark .dot{ width:7px; height:7px; border-radius:50%; background:var(--amber); box-shadow:0 0 8px var(--amber); }
+  .nav-links{ display:flex; gap:28px; font-family:var(--mono); font-size:12.5px; color:var(--ink-dim); }
+  .nav-links a{ transition:color .2s ease; white-space:nowrap; }
+  .nav-links a:hover{ color:var(--ink); }
+  .nav-links a.active{ color:var(--amber); }
+  .nav-book{ color:var(--amber) !important; }
+  .nav-toggle{ display:none; background:none; border:1px solid var(--line); border-radius:4px; width:34px; height:34px; color:var(--ink); font-family:var(--mono); font-size:16px; cursor:pointer; align-items:center; justify-content:center; }
+  @media (max-width:760px){
+    .nav-links{ display:flex; flex-direction:column; gap:0; position:absolute; top:100%; left:0; right:0; background:var(--void); border-bottom:1px solid var(--line); max-height:0; overflow:hidden; transition:max-height .25s ease; }
+    .nav-links.open{ max-height:320px; }
+    .nav-links a{ padding:14px 24px; border-top:1px solid var(--line); }
+    .nav-toggle{ display:flex; }
+  }
+
+  /* ---------- header ---------- */
+  .page-head{ padding:56px 0 32px; }
+  .eyebrow{ font-family:var(--mono); font-size:11.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:16px; display:block; }
+  .page-head h1{ font-family:var(--serif); font-weight:900; font-size:clamp(30px,4vw,44px); color:var(--ink); margin-bottom:16px; letter-spacing:-0.01em; }
+  .page-head p{ color:var(--ink-dim); font-size:15.5px; line-height:1.75; max-width:64ch; }
+
+  /* ---------- action bar ---------- */
+  .action-bar{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;
+    background:var(--surface); border:1px solid var(--line); border-radius:8px;
+    padding:14px 18px; margin:28px 0 40px;
+  }
+  .save-status{ font-family:var(--mono); font-size:12px; color:var(--ink-faint); display:flex; align-items:center; gap:8px; }
+  .save-dot{ width:6px; height:6px; border-radius:50%; background:var(--green); }
+  .action-buttons{ display:flex; gap:10px; }
+  .btn{ font-family:var(--mono); font-size:12.5px; letter-spacing:0.03em; padding:10px 18px; border-radius:3px; cursor:pointer; transition:all .2s ease; border:1px solid var(--line); background:transparent; color:var(--ink); }
+  .btn:hover{ border-color:var(--ink-dim); background:var(--surface-2); }
+  .btn-danger:hover{ border-color:var(--red); color:var(--red); }
+  .btn-reset-confirm{ border-color:var(--red); color:var(--red); }
+
+  /* ---------- self-check ---------- */
+  .selfcheck{
+    background:var(--surface); border:1px solid var(--line); border-radius:8px;
+    padding:26px 26px 22px; margin-bottom:48px;
+  }
+  .selfcheck h2{ font-family:var(--serif); font-weight:700; font-size:19px; margin-bottom:16px; }
+  .sc-item{ display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-top:1px solid var(--line); }
+  .sc-item:first-of-type{ border-top:none; }
+  .sc-item input[type="checkbox"]{ margin-top:3px; width:16px; height:16px; accent-color:var(--amber); flex-shrink:0; }
+  .sc-item label{ font-size:14px; color:var(--ink-dim); line-height:1.6; }
+
+  /* ---------- stage sections ---------- */
+  .stage-section{
+    border-left:3px solid var(--line); border-radius:0 8px 8px 0;
+    background:var(--surface); padding:32px 32px 8px; margin-bottom:32px;
+  }
+  .stage-section.sD{ border-left-color:var(--amber); }
+  .stage-section.sA{ border-left-color:var(--red); }
+  .stage-section.sR{ border-left-color:var(--green); }
+  .stage-section.sE{ border-left-color:var(--cyan); }
+
+  .stage-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:6px; flex-wrap:wrap; }
+  .stage-letter{ font-family:var(--serif); font-weight:900; font-size:34px; line-height:1; }
+  .sD .stage-letter{ color:var(--amber); } .sA .stage-letter{ color:var(--red); }
+  .sR .stage-letter{ color:var(--green); } .sE .stage-letter{ color:var(--cyan); }
+  .stage-head h2{ font-family:var(--serif); font-weight:700; font-size:22px; }
+  .stage-time{ font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); margin-left:auto; }
+
+  .field{ margin-bottom:22px; }
+  .field label{ display:block; font-size:13.5px; color:var(--ink); font-weight:500; margin-bottom:8px; }
+  .field .hint{ display:block; font-size:12.5px; color:var(--ink-faint); font-weight:400; margin-top:3px; }
+  .field input[type="text"], .field textarea, .field select{
+    width:100%; background:var(--void); border:1px solid var(--line); border-radius:5px;
+    color:var(--ink); font-family:var(--sans); font-size:14px; padding:11px 13px;
+    resize:vertical;
+  }
+  .field textarea{ min-height:76px; line-height:1.6; }
+  .field input[type="text"]:focus, .field textarea:focus, .field select:focus{ border-color:var(--ink-dim); }
+  .field select{ appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a93ab'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 14px center; padding-right:34px; }
+
+  .hint-ladder{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+  @media (max-width:700px){ .hint-ladder{ grid-template-columns:1fr; } }
+  .hint-ladder .field{ margin-bottom:0; }
+
+  .callout{
+    background:var(--surface-2); border:1px solid var(--line); border-left:3px solid var(--amber);
+    border-radius:5px; padding:14px 16px; margin-bottom:26px; font-size:13.5px; color:var(--ink-dim); line-height:1.65;
+  }
+  .sA .callout{ border-left-color:var(--red); } .sR .callout{ border-left-color:var(--green); } .sE .callout{ border-left-color:var(--cyan); }
+  .callout b{ color:var(--ink); font-weight:600; }
+
+  footer{ padding:56px 0 64px; border-top:1px solid var(--line); margin-top:20px; }
+  .foot-links{ display:flex; justify-content:center; gap:22px; flex-wrap:wrap; font-family:var(--mono); font-size:11.5px; color:var(--ink-dim); margin-bottom:22px; }
+  .foot-links a:hover{ color:var(--ink); }
+  .bottom-note{ text-align:center; font-family:var(--mono); font-size:11px; color:var(--ink-faint); }
+
+  /* ---------- print ---------- */
+  @media print{
+    body{ background:#fff; color:#111; }
+    .nav, .action-bar, .nav-toggle, footer{ display:none !important; }
+    .wrap{ max-width:100%; padding:0; }
+    .page-head{ padding:0 0 16px; }
+    .page-head h1, .stage-head h2, .selfcheck h2{ color:#111; }
+    .eyebrow, .stage-time, .field .hint{ color:#555; }
+    .page-head p{ color:#333; }
+    .selfcheck, .stage-section{ background:#fff; border:1px solid #999; page-break-inside:avoid; }
+    .stage-section{ border-left:4px solid #333; }
+    .stage-letter{ color:#111 !important; -webkit-print-color-adjust:exact; }
+    .callout{ background:#f3f3f3; border-color:#999; color:#222; }
+    .callout b{ color:#111; }
+    .field input[type="text"], .field textarea, .field select{
+      background:#fff; border:1px solid #999; color:#111;
+    }
+    .field label{ color:#111; }
+    a{ color:#111; }
+    .sc-item input[type="checkbox"]{ accent-color:#111; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-mark"><span class="dot"></span>DARE</a>
+    <div class="nav-links" id="navLinks">
+      <a href="worksheets.html" class="active">Worksheets</a>
+      <a href="use-cases.html">Use cases</a>
+      <a href="https://labs.sarathg.me">Environments</a>
+      <a href="planning-assistant.html">Planning assistant</a>
+      <a href="https://www.sarathg.me" class="nav-book">The book</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">&#9776;</button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div class="page-head">
+    <span class="eyebrow">Session planning</span>
+    <h1>Worksheets</h1>
+    <p>Fill this in while you prep a DARE session on any vulnerability. It is not tied to one attack class, it is the four questions I ask myself before I run any session. Everything you type stays in this browser: nothing is sent anywhere.</p>
+  </div>
+
+  <div class="action-bar">
+    <div class="save-status"><span class="save-dot"></span><span id="saveStatus">Not saved yet</span></div>
+    <div class="action-buttons">
+      <button class="btn" id="printBtn">Print worksheet</button>
+      <button class="btn btn-danger" id="resetBtn">Reset worksheet</button>
+    </div>
+  </div>
+
+  <div class="selfcheck">
+    <h2>Before you plan the session</h2>
+    <div class="sc-item">
+      <input type="checkbox" id="chk1" data-field="chk1">
+      <label for="chk1">The learners will understand what the system is doing before I show them how to break it.</label>
+    </div>
+    <div class="sc-item">
+      <input type="checkbox" id="chk2" data-field="chk2">
+      <label for="chk2">I know whether the learners will run the attack themselves or watch me demonstrate it, and I have questions ready if it's the latter.</label>
+    </div>
+    <div class="sc-item">
+      <input type="checkbox" id="chk3" data-field="chk3">
+      <label for="chk3">The learners will see the attack fail against a patched version before the session ends.</label>
+    </div>
+    <div class="sc-item">
+      <input type="checkbox" id="chk4" data-field="chk4">
+      <label for="chk4">The learners will see the other side: their own attack from the defender's view.</label>
+    </div>
+  </div>
+
+  <form id="worksheetForm">
+
+    <section class="stage-section sD">
+      <div class="stage-head">
+        <span class="stage-letter">D</span>
+        <h2>Deconstruct</h2>
+        <span class="stage-time">10&ndash;15 min full &middot; under 10 compressed</span>
+      </div>
+
+      <div class="field">
+        <label for="d1">System or component</label>
+        <textarea id="d1" data-field="d1" placeholder="What system or component is the learner deconstructing?"></textarea>
+      </div>
+      <div class="field">
+        <label for="d2">Minimal conceptual foundation</label>
+        <textarea id="d2" data-field="d2" placeholder="What does this specific attack require the learner to understand first? e.g. what a database is, what JavaScript does, how directory paths resolve"></textarea>
+      </div>
+      <div class="field">
+        <label for="d3">How you'll make it visual</label>
+        <input type="text" id="d3" data-field="d3" placeholder="Whiteboard sketch, live demo, diagram...">
+      </div>
+      <div class="field">
+        <label for="d4">The question they should be holding</label>
+        <textarea id="d4" data-field="d4" placeholder="What question should the learner be holding by the end of this stage, before they touch anything?"></textarea>
+      </div>
+      <div class="field">
+        <label for="d5">Time budget</label>
+        <select id="d5" data-field="d5">
+          <option value="">Choose one</option>
+          <option value="full">Full session (10&ndash;15 min)</option>
+          <option value="compressed">Compressed (under 10 min)</option>
+        </select>
+      </div>
+    </section>
+
+    <section class="stage-section sA">
+      <div class="stage-head">
+        <span class="stage-letter">A</span>
+        <h2>Attack</h2>
+        <span class="stage-time">the demo &rarr; guided &rarr; independent arc</span>
+      </div>
+
+      <div class="field">
+        <label for="a1">Environment and target</label>
+        <textarea id="a1" data-field="a1" placeholder="What environment or target app is being used? Does it have realistic data, not a bare flag-retrieval target?"></textarea>
+      </div>
+      <div class="field">
+        <label for="a2">Demonstration sequence</label>
+        <textarea id="a2" data-field="a2" placeholder="What does the demonstration show first, and what will you narrate while you do it?"></textarea>
+      </div>
+      <div class="field">
+        <label for="a3">Guided replication</label>
+        <textarea id="a3" data-field="a3" placeholder="What does guided replication look like? Same target, learner's hands."></textarea>
+      </div>
+      <div class="field">
+        <label for="a4">Independent target</label>
+        <textarea id="a4" data-field="a4" placeholder="What is the independent target, and how is it different enough from the demo target that copying the steps won't work?"></textarea>
+      </div>
+      <div class="field">
+        <label>Hint ladder</label>
+        <div class="hint-ladder">
+          <div class="field">
+            <input type="text" id="a5a" data-field="a5a" placeholder="First hint">
+          </div>
+          <div class="field">
+            <input type="text" id="a5b" data-field="a5b" placeholder="Second hint">
+          </div>
+          <div class="field">
+            <input type="text" id="a5c" data-field="a5c" placeholder="Fallback: full demonstration">
+          </div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="a6">What success looks like</label>
+        <textarea id="a6" data-field="a6" placeholder="Not &quot;the exploit worked.&quot; Can the learner explain what happened, why, and what would change if the environment were different?"></textarea>
+      </div>
+    </section>
+
+    <section class="stage-section sR">
+      <div class="stage-head">
+        <span class="stage-letter">R</span>
+        <h2>Remediate</h2>
+        <span class="stage-time">one change, and only one</span>
+      </div>
+
+      <div class="field">
+        <label for="r1">The one change</label>
+        <textarea id="r1" data-field="r1" placeholder="What single change distinguishes the patched version from the vulnerable one? Everything else must be identical."></textarea>
+      </div>
+      <div class="field">
+        <label for="r2">The re-run</label>
+        <textarea id="r2" data-field="r2" placeholder="What attack should the learner re-run, and what should they see when it fails?"></textarea>
+      </div>
+      <div class="field">
+        <label for="r3">Explaining the fix</label>
+        <textarea id="r3" data-field="r3" placeholder="What will you explain about the fix, in plain terms, not theory?"></textarea>
+      </div>
+      <div class="callout"><b>Say this out loud:</b> a pentester is supposed to fail here. Failure means the application is secure.</div>
+    </section>
+
+    <section class="stage-section sE">
+      <div class="stage-head">
+        <span class="stage-letter">E</span>
+        <h2>Exchange</h2>
+        <span class="stage-time">30&ndash;60 min full &middot; don't cut below ~15</span>
+      </div>
+
+      <div class="field">
+        <label for="e1">Evidence source</label>
+        <select id="e1" data-field="e1">
+          <option value="">Choose one</option>
+          <option value="live">Live logs generated by the learner's own attack</option>
+          <option value="precreated">Pre-created logs, time is short</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="e2">What to notice first</label>
+        <textarea id="e2" data-field="e2" placeholder="What will you ask the learner to notice before you explain anything?"></textarea>
+      </div>
+      <div class="field">
+        <label for="e3">The pattern that should become visible</label>
+        <textarea id="e3" data-field="e3" placeholder="e.g. how loud or quiet the attack looks from the defender's side"></textarea>
+      </div>
+      <div class="callout"><b>This is the stage most tempting to cut, and the least okay to cut.</b> Protect at least 15 minutes for it, even under time pressure.</div>
+      <div class="field">
+        <label for="e4">Time budget</label>
+        <select id="e4" data-field="e4">
+          <option value="">Choose one</option>
+          <option value="full">Full session (30&ndash;60 min)</option>
+          <option value="compressed">Compressed (~15 min minimum)</option>
+        </select>
+      </div>
+    </section>
+
+  </form>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-links">
+      <a href="https://www.sarathg.me">The book</a>
+      <a href="https://labs.sarathg.me">Environments</a>
+      <a href="https://sarathg.medium.com">Medium</a>
+      <a href="https://github.com/secretguard">GitHub</a>
+      <a href="https://www.linkedin.com/in/sarathcybersec">LinkedIn</a>
+    </div>
+    <p class="bottom-note">dare.sarathg.me &nbsp;&middot;&nbsp; a design constraint, not a curriculum</p>
+  </div>
+</footer>
+
+<script>
+  // mobile nav toggle
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }));
+
+  // ---------- worksheet persistence ----------
+  const STORAGE_KEY = 'dare-worksheet-v1';
+  const saveStatus = document.getElementById('saveStatus');
+  const fields = document.querySelectorAll('[data-field]');
+
+  function loadWorksheet(){
+    let data = {};
+    try{ data = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }catch(e){ data = {}; }
+    fields.forEach(el => {
+      const key = el.dataset.field;
+      if(!(key in data)) return;
+      if(el.type === 'checkbox') el.checked = !!data[key];
+      else el.value = data[key];
+    });
+    if(data.__savedAt){
+      saveStatus.textContent = 'Saved to this browser';
+    }
+  }
+
+  let saveTimer = null;
+  function saveWorksheet(){
+    const data = {};
+    fields.forEach(el => {
+      const key = el.dataset.field;
+      data[key] = el.type === 'checkbox' ? el.checked : el.value;
+    });
+    data.__savedAt = new Date().toISOString();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    saveStatus.textContent = 'Saved to this browser';
+  }
+
+  fields.forEach(el => {
+    const evt = (el.tagName === 'SELECT' || el.type === 'checkbox') ? 'change' : 'input';
+    el.addEventListener(evt, () => {
+      saveStatus.textContent = 'Saving...';
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveWorksheet, 400);
+    });
+  });
+
+  loadWorksheet();
+
+  // ---------- print ----------
+  document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+  // ---------- reset with confirmation ----------
+  const resetBtn = document.getElementById('resetBtn');
+  let confirming = false;
+  let confirmTimer = null;
+
+  resetBtn.addEventListener('click', () => {
+    if(!confirming){
+      confirming = true;
+      resetBtn.textContent = 'Click again to confirm';
+      resetBtn.classList.add('btn-reset-confirm');
+      confirmTimer = setTimeout(() => {
+        confirming = false;
+        resetBtn.textContent = 'Reset worksheet';
+        resetBtn.classList.remove('btn-reset-confirm');
+      }, 4000);
+      return;
+    }
+    clearTimeout(confirmTimer);
+    localStorage.removeItem(STORAGE_KEY);
+    fields.forEach(el => { el.type === 'checkbox' ? (el.checked = false) : (el.value = ''); });
+    saveStatus.textContent = 'Not saved yet';
+    confirming = false;
+    resetBtn.textContent = 'Reset worksheet';
+    resetBtn.classList.remove('btn-reset-confirm');
+  });
+</script>
+
+</body>
+</html>
