@@ -159,6 +159,14 @@
         <option value="ratelimit">No rate limiting</option>
         <option value="idor">IDOR</option>
         <option value="xss">Stored XSS</option>
+        <option value="bac">Broken access control</option>
+        <option value="csrf">CSRF</option>
+        <option value="ssrf">SSRF</option>
+        <option value="fileupload">Insecure file upload</option>
+        <option value="misconfig">Security misconfiguration</option>
+        <option value="cmdinjection">Command injection</option>
+        <option value="deserialization">Insecure deserialization</option>
+        <option value="xxe">XXE</option>
       </select>
     </div>
     <div class="picker-field">
@@ -326,6 +334,214 @@
         exchange: {
           full: "The evidence is the listener's own log: a request arriving from the victim's browser carrying their exact cookie value. Let the learner sit with that for a second before explaining it, usually the first time they've seen their own payload work from outside their own browser.",
           compressed: "A pre-captured version of the same listener log, with the same pause before explaining it."
+        }
+      }
+    },
+    bac: {
+      label: 'Broken access control',
+      sectors: {
+        banking:    { scene: "ShopEasy's account API, where a request to update a customer profile includes a role field the server trusts without checking who's asking", stakes: "for a bank, that's the difference between a teller account and one that can approve wire transfers" },
+        government: { scene: "ShopEasy's staff-facing API, where a permissions field in the request body determines what an account can see or approve", stakes: "for a government system, that's the difference between a caseworker account and one that can approve benefit payments" },
+        generic:    { scene: "ShopEasy's account API, where a role field sent in the request body is trusted at face value instead of being read from the server's own records", stakes: "for an e-commerce app it's the difference between a customer account and one that can issue refunds or view every order" }
+      },
+      stages: {
+        deconstruct: {
+          full: "The learner needs to understand that a role or permission level is supposed to live on the server, tied to the authenticated session, not travel in the request as something the client gets to state. Show them a request body that includes a role field and let them hold one question: what's stopping me from just writing a different value here?",
+          compressed: "The same request body, the same question, without the longer explanation of session-bound permissions."
+        },
+        attack: {
+          full: "Demonstrate changing the role value in an update request from a standard account to an administrative one, and show the account now has administrative capability on the next request. The learner repeats it on the same account, then moves to an independent target, a different endpoint that also trusts a client-supplied permission field, so they recognize the pattern rather than one specific field name.",
+          compressed: "One demonstration of the role change taking effect, one guided repeat. No independent target."
+        },
+        remediate: {
+          full: "The one change is that the server now reads the account's role from its own stored record instead of trusting the value in the request. Same edited request body, and the role field is simply ignored, the account stays at its original privilege level.",
+          compressed: "A single re-run of the same edited request against the patched API, and a look at the role field being silently ignored."
+        },
+        exchange: {
+          full: "The evidence is a request log showing a standard account's session suddenly making calls that only an administrative account should be able to make, a privilege jump with no corresponding login or approval step behind it. Let the learner find that gap themselves before you point it out, it's a different kind of signal than a payload showing up in a log line.",
+          compressed: "A pre-captured log excerpt showing the same privilege jump, with the same question asked first: what's missing between these two requests?"
+        }
+      }
+    },
+    csrf: {
+      label: 'CSRF',
+      sectors: {
+        banking:    { scene: "a banking portal's fund transfer form, modeled on VulnShop's account settings page, which accepts a state-changing request with no token proving it came from the portal itself", stakes: "for a bank, that's a transfer initiated by a click on a page the customer never meant to trust" },
+        government: { scene: "a government portal's benefit or address-update form, which accepts a state-changing request with no token proving it came from the portal itself", stakes: "for a government system, that's a citizen's records changed by a page they never meant to trust" },
+        generic:    { scene: "VulnShop's account settings page, where changing an email or shipping address only requires an authenticated session, no proof the request actually came from VulnShop's own form", stakes: "for an e-commerce app it's an account takeover disguised as a routine settings change" }
+      },
+      stages: {
+        deconstruct: {
+          full: "The learner needs to understand that a browser attaches session cookies to a request automatically, regardless of which page triggered that request. Walk through the idea that being logged in to a site in one tab means any page, even one open in another tab, can make that browser send an authenticated request without the user doing anything deliberate. The question to hold: if my browser sends the cookie automatically, what else is there to stop a request from working?",
+          compressed: "The same idea in one line: your browser attaches your session cookie to a request no matter which page asked for it."
+        },
+        attack: {
+          full: "Demonstrate a page hosted outside the target site that silently submits a change-email form the moment it's opened in a browser that's already logged in, and show the account's email has changed with no visible action from the victim. The learner repeats it against the same form, then moves to an independent target, a different state-changing form like a shipping address update, so they recognize the missing protection as the pattern, not the specific form.",
+          compressed: "One demonstration of the forged page changing the account email on load, one guided repeat. No independent target."
+        },
+        remediate: {
+          full: "The one change is that the form now requires a per-session token that only the site's own page can generate and submit alongside the request. Same forged page, same click, and the request is now rejected because the token is missing.",
+          compressed: "A single re-run of the same forged page against the patched form, and a look at the request being rejected for a missing token."
+        },
+        exchange: {
+          full: "The evidence is a request log showing the state-changing request arriving with a referrer or origin that doesn't match the site at all, sitting right next to the token-verification failure. Ask the learner what looks out of place about where this request came from before explaining the token check.",
+          compressed: "A pre-captured log line showing the mismatched origin, with the same question asked first."
+        }
+      }
+    },
+    ssrf: {
+      label: 'SSRF',
+      sectors: {
+        banking:    { scene: "ShopEasy's API, where a feature meant to pull in a partner's public data from a supplied URL will fetch anything it's given, including internal addresses", stakes: "for a bank, that's a request that can reach internal systems no customer-facing feature should ever be able to touch" },
+        government: { scene: "ShopEasy's API, where a feature meant to fetch public agency data from a supplied URL doesn't restrict where that URL can point", stakes: "for a government system, that's a path from a public-facing feature into internal network services" },
+        generic:    { scene: "ShopEasy's API, where a feature meant to fetch a product image from a supplied URL will retrieve whatever address it's given, including ones that were never meant to be reachable from outside", stakes: "for an e-commerce app it's a public feature that can be pointed at internal infrastructure instead of a product photo" }
+      },
+      stages: {
+        deconstruct: {
+          full: "The learner needs to understand that when an application fetches a URL on the user's behalf, that request originates from the server, inside the server's own network, not from the user's browser. Sketch the difference between a request the user's browser makes and one the server makes for them. The question to hold: if the server is the one making the request, what can it reach that I can't reach directly?",
+          compressed: "The same distinction in one line: when the server fetches a URL for you, the request comes from inside the server's network, not from your browser."
+        },
+        attack: {
+          full: "Demonstrate pointing the fetch feature at an internal address, for example the server's own metadata or an internal admin endpoint, and show the response comes back through the feature meant for fetching product images. The learner repeats it on the same feature, then moves to an independent target, a different endpoint that also accepts a URL, like a webhook or export destination, so they recognize the pattern rather than one specific field.",
+          compressed: "One demonstration of the fetch feature reaching an internal address, one guided repeat. No independent target."
+        },
+        remediate: {
+          full: "The one change is that the server now validates the destination against an allowed list of external hosts before fetching anything. Same internal address supplied, and the request is now refused before it ever leaves the server.",
+          compressed: "A single re-run of the same request against the patched API, and a look at the request being refused before it's sent."
+        },
+        exchange: {
+          full: "The evidence is the server's own outbound request log, showing it reaching for an internal address it was never designed to talk to, initiated by an external, unauthenticated-looking request. Let the learner trace that outbound line back to the original request before explaining what makes it dangerous, the attack is invisible from the outside, everything interesting happens in a log the user never sees.",
+          compressed: "A pre-captured outbound log line showing the same internal request, with the same question asked first."
+        }
+      }
+    },
+    fileupload: {
+      label: 'Insecure file upload',
+      sectors: {
+        banking:    { scene: "a banking portal's document upload feature, modeled on VulnShop's product image upload, intended for identity documents but accepting any file type and serving it back exactly as uploaded", stakes: "for a bank, that's a customer-facing upload turning into a way to plant a file that runs on the server or gets served to staff reviewing documents" },
+        government: { scene: "a government portal's document upload feature, modeled on VulnShop's product image upload, intended for supporting documents but accepting any file type without checking what's actually inside it", stakes: "for a government system, that's a public-facing upload that can plant a file in front of staff who open submitted documents" },
+        generic:    { scene: "VulnShop's product image upload, which accepts whatever file a seller submits and serves it back from the same folder as every other product image, without checking that it's actually an image", stakes: "for an e-commerce app it's a seller-facing feature that can be used to plant a file other shoppers or staff end up loading" }
+      },
+      stages: {
+        deconstruct: {
+          full: "The learner needs to understand that an upload feature is only as safe as what happens to the file afterward: where it's stored, whether it's checked, and what happens when someone requests it back. Have them think through the full round trip, upload, storage, retrieval, rather than just the upload form itself. The question to hold: what does this server actually do with the file after it's saved?",
+          compressed: "The same round trip, compressed to one question: what does the server do with this file after it's saved?"
+        },
+        attack: {
+          full: "Demonstrate uploading a file disguised as a product image that actually contains executable script content, then show what happens when that file is requested back, either executing on the server or running in the browser of whoever views it. The learner repeats it on the same upload form, then moves to an independent target, a different upload feature like a profile picture, so they recognize the missing validation as the pattern.",
+          compressed: "One demonstration of the planted file being served back and acting on it, one guided repeat. No independent target."
+        },
+        remediate: {
+          full: "The one change is that uploaded files are now validated against their actual content, not just their file extension, and stored in a way that prevents them from executing. Same planted file, same upload, and it's now either rejected outright or stored somewhere it can only ever be treated as inert data.",
+          compressed: "A single re-run of the same upload against the patched feature, and a look at the file being rejected or neutralized."
+        },
+        exchange: {
+          full: "The evidence is the server's file storage and access logs showing a file that doesn't match what it claims to be, sitting in a folder alongside legitimate images, and a request pattern where that file gets accessed shortly after being uploaded. Ask the learner what looks wrong about that file's presence before explaining what it would have done if it had run.",
+          compressed: "A pre-captured log and file listing showing the same mismatch, with the same question asked first."
+        }
+      }
+    },
+    misconfig: {
+      label: 'Security misconfiguration',
+      sectors: {
+        banking:    { scene: "a banking portal's admin login page, modeled on VulnShop's admin panel, left reachable from the public internet and still running on its default credentials", stakes: "for a bank, that's the entire back office one guessed password away from a public-facing URL" },
+        government: { scene: "a government portal's admin interface, modeled on VulnShop's admin panel, exposed publicly with default credentials still in place", stakes: "for a government system, that's administrative access to citizen records sitting behind a password nobody bothered to change" },
+        generic:    { scene: "VulnShop's admin panel, reachable at a predictable URL with the default installation credentials never changed, and error pages that print a full stack trace including internal file paths", stakes: "for an e-commerce app it's the difference between a private back office and one that's effectively public" }
+      },
+      stages: {
+        deconstruct: {
+          full: "The learner needs to understand that a lot of serious access doesn't come from clever exploitation, it comes from configuration nobody finished: default passwords left in place, admin panels left reachable, error messages left verbose. Have them look at what a normal error page reveals versus what this one reveals. The question to hold: what is this application telling me that it shouldn't be?",
+          compressed: "The same idea in one line: what is this application telling me, or letting me reach, that it shouldn't be?"
+        },
+        attack: {
+          full: "Demonstrate finding the admin panel at its default path, logging in with the default credentials, and browsing the resulting error page to show internal file paths and framework details it exposes. The learner repeats it on the same target, then moves to an independent target, a different exposed endpoint or a different default credential pair, so they recognize the category of mistake rather than one specific login.",
+          compressed: "One demonstration of the default-credential login and one verbose error page, one guided repeat. No independent target."
+        },
+        remediate: {
+          full: "The one change is that default credentials have been replaced and rotated, the admin panel is no longer reachable from outside the internal network, and error output has been reduced to a generic message. Same URLs, same attempted login, and none of it goes anywhere anymore.",
+          compressed: "A single re-run of the same login attempt and the same error trigger against the patched version, and a look at both failing to reveal anything."
+        },
+        exchange: {
+          full: "The evidence is a mix of things: a successful login using a credential pair that should never have worked, and a series of requests that seem to be probing for exposed paths and triggering errors deliberately. Ask the learner to describe what that combination looks like from the server's side before connecting it back to what they were actually doing.",
+          compressed: "A pre-captured version of the same login and probing pattern, with the same question asked first."
+        }
+      }
+    },
+    cmdinjection: {
+      label: 'Command injection',
+      sectors: {
+        banking:    { scene: "ShopEasy's API, where a diagnostic endpoint that checks whether a partner service is reachable passes a supplied hostname straight into a shell command", stakes: "for a bank, that's a diagnostic feature that can be turned into a way to run commands on the server hosting customer systems" },
+        government: { scene: "ShopEasy's API, where a diagnostic endpoint checks connectivity to a supplied hostname by shelling out to a system command, without sanitising what's passed in", stakes: "for a government system, that's a small operational feature that can become a way to run arbitrary commands on infrastructure handling citizen data" },
+        generic:    { scene: "ShopEasy's API, where a diagnostic endpoint that pings a supplied hostname to check if a supplier's service is reachable passes that hostname straight into a shell command", stakes: "for an e-commerce app it's an operational convenience feature that can be turned into full command execution on the server" }
+      },
+      stages: {
+        deconstruct: {
+          full: "The learner needs to understand what it means for an application to hand input to a system shell rather than handling it in code, and that a shell will interpret certain characters as instructions to run something else entirely, not just as part of a hostname. Sketch one hostname value with a shell separator in it and ask what the shell does with everything after that character. The question to hold: is my input being treated as data, or as part of the command itself?",
+          compressed: "The same sketch, compressed to one question: is my input being treated as data, or as part of the command?"
+        },
+        attack: {
+          full: "Demonstrate supplying a hostname value that includes a shell separator followed by a second command, and show that second command's output returned in the response meant only to report reachability. The learner repeats it on the same endpoint, then moves to an independent target, a different feature that also shells out, like a file conversion or export tool, so they recognize the pattern rather than one specific endpoint.",
+          compressed: "One demonstration of the injected command's output appearing in the response, one guided repeat. No independent target."
+        },
+        remediate: {
+          full: "The one change is that the hostname is now passed to the underlying system call as a single argument rather than being concatenated into a shell string, so shell separator characters are no longer meaningful. Same crafted input, and it's now treated as a literal, invalid hostname instead of two commands.",
+          compressed: "A single re-run of the same crafted input against the patched endpoint, and a look at it failing as an invalid hostname instead of executing anything."
+        },
+        exchange: {
+          full: "The evidence is the server's process or command log showing a second, unexpected command executing immediately after the diagnostic endpoint was called, with no legitimate reason for that command to run at that moment. Let the learner spot the command that doesn't belong before explaining how it got there, this is usually the first time they've seen a log entry for something that never should have been possible to run.",
+          compressed: "A pre-captured process log showing the same unexpected command, with the same question asked first."
+        }
+      }
+    },
+    deserialization: {
+      label: 'Insecure deserialization',
+      sectors: {
+        banking:    { scene: "ShopEasy's API, where a serialized session or preference object from the client is deserialized directly into an application object without verifying what's actually inside it", stakes: "for a bank, that's a client-supplied blob that ends up trusted as if it came from the server's own logic" },
+        government: { scene: "ShopEasy's API, where a serialized state object from the client, for a saved application or draft, is deserialized without verifying its contents", stakes: "for a government system, that's citizen-submitted data being trusted to reconstruct application logic, not just fill in a form" },
+        generic:    { scene: "ShopEasy's API, where a serialized cart or preference object from the client is deserialized back into an application object without checking what it actually contains", stakes: "for an e-commerce app it's a shopping cart feature that can be turned into a way to make the server construct objects it never meant to construct" }
+      },
+      stages: {
+        deconstruct: {
+          full: "The learner needs to understand that deserializing data means turning a stored or transmitted blob back into a live object the application will run code against, and that if the application will deserialize whatever the client sends, the client effectively gets to describe what object gets built. Have them think about the difference between data the application generated for itself and data it's being handed back by someone else. The question to hold: does the application know the difference between its own data and someone else's?",
+          compressed: "The same idea in one line: does the application know the difference between the data it generated and data it's just been handed?"
+        },
+        attack: {
+          full: "Demonstrate crafting a serialized object that, once deserialized, triggers unintended behavior, for example running code as a side effect of being reconstructed, and show that behavior happening on the server. The learner repeats it on the same endpoint, then moves to an independent target, a different feature that also deserializes client-supplied data, so they recognize the underlying pattern rather than one specific crafted blob.",
+          compressed: "One demonstration of the crafted object triggering its side effect, one guided repeat. No independent target."
+        },
+        remediate: {
+          full: "The one change is that the endpoint now only accepts a restricted, validated data format instead of deserializing arbitrary objects, so there's no longer a path from client input to constructing arbitrary application objects. Same crafted blob, and it's now rejected before deserialization even happens.",
+          compressed: "A single re-run of the same crafted object against the patched endpoint, and a look at it being rejected before deserialization."
+        },
+        exchange: {
+          full: "The evidence is the server's application log showing an object being constructed and executing a side effect that has no legitimate path in the normal flow of the application, immediately after a request most logs would otherwise treat as routine. Ask the learner to find the moment where something ran that the request shouldn't have been able to cause, before connecting it to the payload they sent.",
+          compressed: "A pre-captured log showing the same unexplained side effect, with the same question asked first."
+        }
+      }
+    },
+    xxe: {
+      label: 'XXE',
+      sectors: {
+        banking:    { scene: "ShopEasy's API, where a bulk order import feature accepts an XML file and the parser processes it with external entity resolution left enabled", stakes: "for a bank, that's a data import feature that can be turned into a way to read files off the server hosting financial data" },
+        government: { scene: "ShopEasy's API, where a record import feature accepts XML and the parser resolves external entities defined inside the file without restriction", stakes: "for a government system, that's a routine data submission feature that can expose files or internal services never meant to be reachable" },
+        generic:    { scene: "ShopEasy's API, where a bulk product or order import feature accepts an XML file and the parser resolves external entities defined inside it without restriction", stakes: "for an e-commerce app it's a supplier-facing import feature that can be turned into a way to read arbitrary files off the server" }
+      },
+      stages: {
+        deconstruct: {
+          full: "The learner needs to understand that XML can define its own entities, shortcuts that get substituted with other content when the document is parsed, and that some of those entities can point outside the document entirely, at a file path or a network address. Sketch a minimal XML document with one external entity defined and ask what happens when the parser resolves it. The question to hold: what is this parser willing to go fetch on my behalf just because I defined it in the document?",
+          compressed: "The same idea in one line: an XML document can define an entity that points outside itself, and ask the parser to go fetch it."
+        },
+        attack: {
+          full: "Demonstrate submitting an XML import file that defines an external entity pointing at a local file on the server, and show that file's contents returned in the import response instead of an import confirmation. The learner repeats it on the same feature, then moves to an independent target, a different XML-accepting endpoint, so they recognize the pattern rather than one specific file path.",
+          compressed: "One demonstration of the local file contents returning in the response, one guided repeat. No independent target."
+        },
+        remediate: {
+          full: "The one change is that the XML parser now has external entity resolution disabled entirely, which is a configuration setting, not a rewrite of the import logic. Same crafted file, same upload, and the entity is no longer resolved, it's either ignored or the document is rejected.",
+          compressed: "A single re-run of the same crafted file against the patched endpoint, and a look at the entity going unresolved."
+        },
+        exchange: {
+          full: "The evidence is the import feature's own processing log, showing a request that reads and returns file content having nothing to do with the order or product data the feature was built to accept. Ask the learner what an import response containing that content tells them about what the parser did before explaining external entity resolution.",
+          compressed: "A pre-captured log entry showing the same mismatched content in an import response, with the same question asked first."
         }
       }
     }
