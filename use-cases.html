@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Use cases — DARE Framework</title>
-<meta name="description" content="Four vulnerability classes walked through the DARE Framework stage by stage: SQL injection, no rate limiting, IDOR, and stored XSS, using VulnShop as the target.">
+<meta name="description" content="Cybersecurity topics walked through the DARE Framework stage by stage: web and API flaws, Kerberoasting, SSRF to cloud metadata, ARP spoofing, phishing triage and SIEM detection. A growing library.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Use cases — DARE Framework">
-<meta property="og:description" content="Four vulnerability classes walked through the DARE Framework stage by stage: SQL injection, no rate limiting, IDOR, and stored XSS, using VulnShop as the target.">
+<meta property="og:description" content="Cybersecurity topics walked through the DARE Framework stage by stage: web and API flaws, Kerberoasting, SSRF to cloud metadata, ARP spoofing, phishing triage and SIEM detection. A growing library.">
 <meta property="og:url" content="https://dare.sarathg.me/use-cases.html">
 <meta property="og:image" content="https://dare.sarathg.me/og/use-cases.png">
 <meta property="og:image:width" content="1200">
@@ -15,7 +15,7 @@
 <meta property="og:image:alt" content="DARE use cases | Sarath G">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Use cases — DARE Framework">
-<meta name="twitter:description" content="Four vulnerability classes walked through the DARE Framework stage by stage: SQL injection, no rate limiting, IDOR, and stored XSS, using VulnShop as the target.">
+<meta name="twitter:description" content="Cybersecurity topics walked through the DARE Framework stage by stage: web and API flaws, Kerberoasting, SSRF to cloud metadata, ARP spoofing, phishing triage and SIEM detection. A growing library.">
 <meta name="twitter:image" content="https://dare.sarathg.me/og/use-cases.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -139,7 +139,7 @@
       <a href="use-cases.html" class="active">Use cases</a>
       <a href="https://labs.sarathg.me">Environments</a>
       <a href="planning-assistant.html">Planning assistant</a>
-      <a href="https://www.sarathg.me" class="nav-book">The book</a>
+      <a href="https://store.pothi.com/book/sarath-g-certified-and-clueless/" class="nav-book" target="_blank" rel="noopener">The book</a>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">&#9776;</button>
   </div>
@@ -147,9 +147,9 @@
 
 <main class="wrap">
   <div class="page-head">
-    <span class="eyebrow">Four sessions, one target app</span>
+    <span class="eyebrow">Worked examples, across the field</span>
     <h1>Use cases</h1>
-    <p>These are four vulnerability classes run through DARE against the same target, VulnShop, a deliberately vulnerable e-commerce app I use in training. Each one follows the same arc: understand the system, break it, watch it get fixed, then see the break from the other side.</p>
+    <p>These are full sessions run through DARE, stage by stage. The first four use VulnShop, the deliberately vulnerable e-commerce app I teach with; the rest reach beyond the book into APIs, Active Directory, the cloud, the network, and the blue team, because the framework was never limited to web vulnerabilities. Each one follows the same arc: understand the system, break it, watch it get fixed, then see the break from the other side. This library grows over time, so check back.</p>
   </div>
 
   <nav class="jump-nav" aria-label="Jump to a use case">
@@ -157,6 +157,12 @@
     <a href="#ratelimit" class="jump-chip jcB"><span class="n">02</span>No rate limiting</a>
     <a href="#idor" class="jump-chip jcC"><span class="n">03</span>IDOR</a>
     <a href="#xss" class="jump-chip jcD"><span class="n">04</span>Stored XSS</a>
+    <a href="#bola" class="jump-chip jcA"><span class="n">05</span>API BOLA</a>
+    <a href="#kerberoast" class="jump-chip jcB"><span class="n">06</span>Kerberoasting</a>
+    <a href="#imds" class="jump-chip jcC"><span class="n">07</span>SSRF to cloud</a>
+    <a href="#mitm" class="jump-chip jcD"><span class="n">08</span>ARP spoofing</a>
+    <a href="#phishing-triage" class="jump-chip jcA"><span class="n">09</span>Phishing triage</a>
+    <a href="#siem-detection" class="jump-chip jcB"><span class="n">10</span>SIEM detection</a>
   </nav>
 
   <article class="usecase" id="sqli">
@@ -259,11 +265,161 @@
     <p class="uc-close">Want the worksheet for this one? <a href="worksheets.html">Fill it in here</a>, or see how this maps to a full session plan in the <a href="planning-assistant.html">planning assistant</a>.</p>
   </article>
 
+  <article class="usecase" id="bola">
+    <div class="uc-eyebrow">Use case 05</div>
+    <h2>Broken object-level authorization, in the mobile API</h2>
+    <p class="uc-scene">VulnShop has a mobile app, and behind it a JSON API. <span style="font-family:var(--mono);color:var(--ink);">GET /api/orders/{id}</span> returns an order by its number. The API checks you are logged in. It never checks the order is yours. This is IDOR grown up: the same missing question, one layer deeper, where most people stop looking.</p>
+
+    <div class="uc-stage stD">
+      <div class="uc-stage-label"><span class="uc-stage-letter">D</span><span class="uc-stage-name">Deconstruct</span></div>
+      <p>Before touching the API, the learner needs to separate authentication from authorization at the API layer, and see that an id in a URL maps straight to a database row. The holding question is the one the server forgot to ask: it confirmed <em>who</em> you are, but did it confirm the object is <em>yours</em>?</p>
+    </div>
+    <div class="uc-stage stA">
+      <div class="uc-stage-label"><span class="uc-stage-letter">A</span><span class="uc-stage-name">Attack</span></div>
+      <p>I call the endpoint for my own order, then change the id and watch someone else's order come back, items and delivery address included. The learner repeats on their own account, then moves to an endpoint where the id is a UUID they have to discover first, so guessing does nothing. Success is naming the missing ownership check, not just pulling data.</p>
+    </div>
+    <div class="uc-stage stR">
+      <div class="uc-stage-label"><span class="uc-stage-letter">R</span><span class="uc-stage-name">Remediate</span></div>
+      <p>The one change in the patched API is a server-side check that the requested object belongs to the caller. Same request, and now it returns 403. A pentester is supposed to fail here. The 403 is not the tool being blocked, it is the application finally asking the question it should have asked from the start.</p>
+    </div>
+    <div class="uc-stage stE">
+      <div class="uc-stage-label"><span class="uc-stage-letter">E</span><span class="uc-stage-name">Exchange</span></div>
+      <p>I open the API logs. A single session requesting a run of ids that plainly are not its own is one of the most obvious patterns a defender will ever see. The learner, who a moment ago was the attacker, can now say exactly what they would alert on, and what they would have done to spread the requests out and stay quiet.</p>
+    </div>
+
+    <p class="uc-close">Plan this as a full session in the <a href="planning-assistant.html">planning assistant</a>, or start from a blank <a href="worksheets.html">worksheet</a>.</p>
+  </article>
+
+  <article class="usecase" id="kerberoast">
+    <div class="uc-eyebrow">Use case 06</div>
+    <h2>Kerberoasting, in a Windows domain</h2>
+    <p class="uc-scene">This one leaves VulnShop behind for a small Active Directory lab: a domain, an ordinary low-privileged user, and a service account whose password is weak and whose SPN is set. Nothing here is exotic. It is the quiet, ordinary misconfiguration that turns a foothold into a domain.</p>
+
+    <div class="uc-stage stD">
+      <div class="uc-stage-label"><span class="uc-stage-letter">D</span><span class="uc-stage-name">Deconstruct</span></div>
+      <p>The learner needs a working picture of Kerberos service tickets: any domain user can ask for a ticket to a service, and part of that ticket is encrypted with the service account's own password hash. The holding question falls out of that fact. If anyone is allowed to request the ticket, what is stopping you from taking it away and cracking it offline, on your own time, where no one is watching?</p>
+    </div>
+    <div class="uc-stage stA">
+      <div class="uc-stage-label"><span class="uc-stage-letter">A</span><span class="uc-stage-name">Attack</span></div>
+      <p>I enumerate the accounts that have SPNs, request a ticket for one, and crack its weak password offline. The learner repeats against a different SPN, then reasons about why a long random password would have defeated the whole thing. Success is explaining the offline-crack step and why it is unstoppable once you hold the ticket, not just running the tool that automates it.</p>
+    </div>
+    <div class="uc-stage stR">
+      <div class="uc-stage-label"><span class="uc-stage-letter">R</span><span class="uc-stage-name">Remediate</span></div>
+      <p>The patched service account uses a long random password, or a group-managed service account. The learner requests the very same ticket, runs the very same crack, and it grinds to nothing. Same request, uncrackable ticket. A pentester is supposed to fail, and this failure is a password policy doing its job.</p>
+    </div>
+    <div class="uc-stage stE">
+      <div class="uc-stage-label"><span class="uc-stage-letter">E</span><span class="uc-stage-name">Exchange</span></div>
+      <p>On the domain controller, one account requesting a burst of service tickets it has no reason to touch is a distinct, logged event. The learner sees their careful offline attack from the defender's side, where it was noisy the moment it began, and works out how an attacker would slow the requests down to blend in.</p>
+    </div>
+
+    <p class="uc-close">Plan this as a full session in the <a href="planning-assistant.html">planning assistant</a>, or start from a blank <a href="worksheets.html">worksheet</a>.</p>
+  </article>
+
+  <article class="usecase" id="imds">
+    <div class="uc-eyebrow">Use case 07</div>
+    <h2>SSRF to cloud metadata, in a hosted app</h2>
+    <p class="uc-scene">A cloud-hosted version of the app has a feature that fetches a URL you give it, an image importer. That fetch can reach the instance metadata service, the link-local address a cloud machine queries to learn its own configuration, including its temporary credentials. Two ordinary things, dangerous only when they meet.</p>
+
+    <div class="uc-stage stD">
+      <div class="uc-stage-label"><span class="uc-stage-letter">D</span><span class="uc-stage-name">Deconstruct</span></div>
+      <p>The learner needs both halves before they connect them: what the metadata endpoint is and why it hands out credentials, and what SSRF is, making a server fetch a URL the attacker chose. The holding question is what happens when those two meet. If you can make the app fetch any URL, what comes back when the URL you choose is the metadata service?</p>
+    </div>
+    <div class="uc-stage stA">
+      <div class="uc-stage-label"><span class="uc-stage-letter">A</span><span class="uc-stage-name">Attack</span></div>
+      <p>I use the importer to fetch the metadata endpoint, then walk it down to the role credentials sitting behind it. The learner repeats through a different SSRF sink, then reasons about exactly what those credentials unlock in the account. Success is explaining the pivot, from a web bug to a cloud identity, not just seeing the credentials print.</p>
+    </div>
+    <div class="uc-stage stR">
+      <div class="uc-stage-label"><span class="uc-stage-letter">R</span><span class="uc-stage-name">Remediate</span></div>
+      <p>The patched instance requires a session token for metadata (IMDSv2), limits outbound traffic, and validates the importer's input. The same SSRF now reaches nothing. Same attack, a dead end. That dead end is the fix, and it is worth sitting with, because nothing about the web request changed, only what the environment allowed it to touch.</p>
+    </div>
+    <div class="uc-stage stE">
+      <div class="uc-stage-label"><span class="uc-stage-letter">E</span><span class="uc-stage-name">Exchange</span></div>
+      <p>The cloud audit log tells the other half of the story: the role's credentials being used from somewhere they never should be. The learner, freshly out of the attacker's seat, works out what a defender would correlate between the application logs and the cloud audit trail to catch the pivot in progress.</p>
+    </div>
+
+    <p class="uc-close">Plan this as a full session in the <a href="planning-assistant.html">planning assistant</a>, or start from a blank <a href="worksheets.html">worksheet</a>.</p>
+  </article>
+
+  <article class="usecase" id="mitm">
+    <div class="uc-eyebrow">Use case 08</div>
+    <h2>ARP spoofing, on a flat network</h2>
+    <p class="uc-scene">A lab network with a client, a gateway, and an attacker on the same segment. No web application at all this time, just the wire everyone assumes is trustworthy. It is a useful reminder that DARE is about understanding systems, and a network is a system like any other.</p>
+
+    <div class="uc-stage stD">
+      <div class="uc-stage-label"><span class="uc-stage-letter">D</span><span class="uc-stage-name">Deconstruct</span></div>
+      <p>The learner needs to know how a switch and ARP decide where a frame goes, and the uncomfortable fact underneath it: ARP has no authentication, so a host simply believes the most recent reply about who owns an IP. The holding question writes itself. If you can lie about which machine owns the gateway's address, whose traffic starts flowing through you?</p>
+    </div>
+    <div class="uc-stage stA">
+      <div class="uc-stage-label"><span class="uc-stage-letter">A</span><span class="uc-stage-name">Attack</span></div>
+      <p>I poison the client and the gateway so their traffic routes through my machine, then pull a plaintext credential straight out of the captured stream. The learner repeats and captures a different protocol. Success is explaining why the switch cooperated so willingly, that nothing was broken, the protocol did exactly what it was designed to do.</p>
+    </div>
+    <div class="uc-stage stR">
+      <div class="uc-stage-label"><span class="uc-stage-letter">R</span><span class="uc-stage-name">Remediate</span></div>
+      <p>With dynamic ARP inspection in place and every sensitive service over TLS, the same poisoning is either dropped or the captured traffic is unreadable. The attack still runs. It just yields nothing usable. That nothing is the point, and it is a cleaner lesson about encryption than any slide about it.</p>
+    </div>
+    <div class="uc-stage stE">
+      <div class="uc-stage-label"><span class="uc-stage-letter">E</span><span class="uc-stage-name">Exchange</span></div>
+      <p>From the defender's side, a flood of unsolicited ARP replies and a MAC address suddenly claiming to be the gateway is a loud, detectable event. The learner, having just been in the middle of the network, can now say precisely what a defender should watch for on the LAN to catch it.</p>
+    </div>
+
+    <p class="uc-close">Plan this as a full session in the <a href="planning-assistant.html">planning assistant</a>, or start from a blank <a href="worksheets.html">worksheet</a>.</p>
+  </article>
+
+  <article class="usecase" id="phishing-triage">
+    <div class="uc-eyebrow">Use case 09</div>
+    <h2>Phishing triage, from the analyst&rsquo;s seat</h2>
+    <p class="uc-scene">This is a defensive session, and it shows how DARE adapts when the learner is a defender. The environment is a reported email sitting in an inbox: headers, a link, an attachment. The four stages still hold. The roles simply start on the other side.</p>
+
+    <div class="uc-stage stD">
+      <div class="uc-stage-label"><span class="uc-stage-letter">D</span><span class="uc-stage-name">Deconstruct</span></div>
+      <p>The learner needs to know what an email actually is beneath the client: headers that reveal the real origin, a body, and payloads in its links and attachments. The holding question is the analyst's first instinct. The display name says one thing, so what does the header path and envelope actually say about where this came from?</p>
+    </div>
+    <div class="uc-stage stA">
+      <div class="uc-stage-label"><span class="uc-stage-letter">A</span><span class="uc-stage-name">Attack</span></div>
+      <p>Here the &ldquo;attack&rdquo; is the investigation. The learner reads the headers, detonates the link and attachment safely in a sandbox, and reaches a verdict backed by evidence. They repeat the whole pass on a second sample, then reason about which indicators were decisive. Success is a verdict they can defend, not a hunch.</p>
+    </div>
+    <div class="uc-stage stR">
+      <div class="uc-stage-label"><span class="uc-stage-letter">R</span><span class="uc-stage-name">Remediate</span></div>
+      <p>Remediate is the response. The learner contains the threat, blocks the sender and URL, pulls the message from every other inbox it reached, then confirms that a re-sent copy no longer lands. The blocked re-delivery is the equivalent of the patched app refusing the payload: proof the fix works.</p>
+    </div>
+    <div class="uc-stage stE">
+      <div class="uc-stage-label"><span class="uc-stage-letter">E</span><span class="uc-stage-name">Exchange</span></div>
+      <p>Exchange sends the learner to the attacker's seat. What made this email convincing? What infrastructure sent it? How would you have built it to slip past the very filter that caught it? The analyst who has thought like the sender writes better detections than the one who has only ever received.</p>
+    </div>
+
+    <p class="uc-close">Plan this as a full session in the <a href="planning-assistant.html">planning assistant</a>, or start from a blank <a href="worksheets.html">worksheet</a>.</p>
+  </article>
+
+  <article class="usecase" id="siem-detection">
+    <div class="uc-eyebrow">Use case 10</div>
+    <h2>Writing a detection, in the SIEM</h2>
+    <p class="uc-scene">The environment is a SIEM holding the logs of an attack the learner has already run, the brute force from use case 02 is a good one. The task is not to attack. It is to catch it, reliably, without burying the analyst in false alarms. DARE for the blue team.</p>
+
+    <div class="uc-stage stD">
+      <div class="uc-stage-label"><span class="uc-stage-letter">D</span><span class="uc-stage-name">Deconstruct</span></div>
+      <p>A detection, stripped down, is a hypothesis about what an attack always leaves behind, written as a query over logs. The learner needs that framing before they write a line. The holding question is the one every good rule answers: what specific, repeatable trace does this attack always produce that ordinary traffic never does?</p>
+    </div>
+    <div class="uc-stage stA">
+      <div class="uc-stage-label"><span class="uc-stage-letter">A</span><span class="uc-stage-name">Attack</span></div>
+      <p>The &ldquo;attack&rdquo; here is building the rule. The learner writes a detection from the trace and tunes it against real log data until it catches the attack cleanly. They repeat for a variant of the attack, then reason about the trade between catching everything and crying wolf. Success is explaining why the rule fires when it should.</p>
+    </div>
+    <div class="uc-stage stR">
+      <div class="uc-stage-label"><span class="uc-stage-letter">R</span><span class="uc-stage-name">Remediate</span></div>
+      <p>Remediate inverts into verification. Replay the attack and confirm the rule fires. Then replay a day of benign traffic and confirm it stays silent. A rule that is quiet on normal data matters exactly as much as one that is loud on the attack, and learners feel that the first time their rule screams at nothing.</p>
+    </div>
+    <div class="uc-stage stE">
+      <div class="uc-stage-label"><span class="uc-stage-letter">E</span><span class="uc-stage-name">Exchange</span></div>
+      <p>Exchange hands the learner the attacker's seat one more time. How would you change the timing, the volume, or the encoding to slip under the rule you just wrote? Every detection has an evasion. Knowing yours is not a weakness in the rule, it is how you harden it.</p>
+    </div>
+
+    <p class="uc-close">Plan this as a full session in the <a href="planning-assistant.html">planning assistant</a>, or start from a blank <a href="worksheets.html">worksheet</a>.</p>
+  </article>
+
   <div class="cta-band">
-    <h2>These four are a starting point, not the whole book.</h2>
-    <p>Certified and Clueless walks through each of these in more depth, plus how I run the framework end to end for a live audience.</p>
+    <h2>These are a starting point, and the library keeps growing.</h2>
+    <p>Certified and Clueless walks through the framework in full, plus how I run it end to end for a live audience. New worked examples land here as more DARE sessions get documented, so this page is never finished.</p>
     <div class="cta-row">
-      <a href="https://www.sarathg.me" class="btn btn-primary">Get the book</a>
+      <a href="https://store.pothi.com/book/sarath-g-certified-and-clueless/" class="btn btn-primary" target="_blank" rel="noopener">Get the book</a>
       <a href="planning-assistant.html" class="btn btn-ghost">Plan a session</a>
     </div>
   </div>
@@ -272,7 +428,7 @@
 <footer>
   <div class="wrap">
     <div class="foot-links">
-      <a href="https://www.sarathg.me">The book</a>
+      <a href="https://store.pothi.com/book/sarath-g-certified-and-clueless/" target="_blank" rel="noopener">The book</a>
       <a href="https://labs.sarathg.me">Environments</a>
       <a href="https://sarathg.medium.com">Medium</a>
       <a href="https://github.com/secretguard">GitHub</a>

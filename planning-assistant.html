@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planning assistant — DARE Framework</title>
-<meta name="description" content="Pick a vulnerability, a sector, and a time budget. Get a DARE session outline assembled from a library of prewritten blocks. No AI, just rules.">
+<meta name="description" content="Pick a cybersecurity topic, a sector, and a time budget. Get a DARE session outline assembled from a growing library of tested blocks across web, network, cloud, AD, wireless, malware and blue-team topics. No AI, just rules.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Planning assistant — DARE Framework">
-<meta property="og:description" content="Pick a vulnerability, a sector, and a time budget. Get a DARE session outline assembled from a library of prewritten blocks. No AI, just rules.">
+<meta property="og:description" content="Pick a cybersecurity topic, a sector, and a time budget. Get a DARE session outline assembled from a growing library of tested blocks across web, network, cloud, AD, wireless, malware and blue-team topics. No AI, just rules.">
 <meta property="og:url" content="https://dare.sarathg.me/planning-assistant.html">
 <meta property="og:image" content="https://dare.sarathg.me/og/planning-assistant.png">
 <meta property="og:image:width" content="1200">
@@ -15,7 +15,7 @@
 <meta property="og:image:alt" content="DARE planning assistant | Sarath G">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Planning assistant — DARE Framework">
-<meta name="twitter:description" content="Pick a vulnerability, a sector, and a time budget. Get a DARE session outline assembled from a library of prewritten blocks. No AI, just rules.">
+<meta name="twitter:description" content="Pick a cybersecurity topic, a sector, and a time budget. Get a DARE session outline assembled from a growing library of tested blocks across web, network, cloud, AD, wireless, malware and blue-team topics. No AI, just rules.">
 <meta name="twitter:image" content="https://dare.sarathg.me/og/planning-assistant.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -157,7 +157,7 @@
       <a href="use-cases.html">Use cases</a>
       <a href="https://labs.sarathg.me">Environments</a>
       <a href="planning-assistant.html" class="active">Planning assistant</a>
-      <a href="https://www.sarathg.me" class="nav-book">The book</a>
+      <a href="https://store.pothi.com/book/sarath-g-certified-and-clueless/" class="nav-book" target="_blank" rel="noopener">The book</a>
     </div>
     <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">&#9776;</button>
   </div>
@@ -167,26 +167,72 @@
   <div class="page-head">
     <span class="eyebrow">For trainers building a session</span>
     <h1>Planning assistant</h1>
-    <p>Pick a vulnerability, a sector, and how much time you have. This assembles a session outline from a library of blocks I've written and tested, not from a model guessing what a good session looks like. If a combination isn't in the library yet, it says so and points you to me directly instead of inventing something.</p>
+    <p>Pick a topic, a sector, and how much time you have, and this assembles a DARE session outline from a growing library of blocks I've written and tested, not a model guessing what a good session looks like. It now spans web and API flaws, network and Active Directory attacks, cloud, wireless, malware, blue-team detection and more, so you can plan a DARE session for almost any cybersecurity topic. Where a topic isn't specialised for your sector yet, it says so and gives you the general version rather than inventing one.</p>
   </div>
 
   <div class="picker">
     <div class="picker-field">
-      <label for="topicSelect">Vulnerability</label>
+      <label for="topicSelect">Topic</label>
       <select id="topicSelect">
         <option value="">Choose a topic</option>
-        <option value="sqli">SQL injection</option>
-        <option value="ratelimit">No rate limiting</option>
-        <option value="idor">IDOR</option>
-        <option value="xss">Stored XSS</option>
-        <option value="bac">Broken access control</option>
-        <option value="csrf">CSRF</option>
-        <option value="ssrf">SSRF</option>
-        <option value="fileupload">Insecure file upload</option>
-        <option value="misconfig">Security misconfiguration</option>
-        <option value="cmdinjection">Command injection</option>
-        <option value="deserialization">Insecure deserialization</option>
-        <option value="xxe">XXE</option>
+        <optgroup label="Web & application">
+          <option value="sqli">SQL injection</option>
+          <option value="ratelimit">No rate limiting</option>
+          <option value="idor">IDOR</option>
+          <option value="xss">Stored XSS</option>
+          <option value="bac">Broken access control</option>
+          <option value="csrf">CSRF</option>
+          <option value="ssrf">SSRF</option>
+          <option value="fileupload">Insecure file upload</option>
+          <option value="misconfig">Security misconfiguration</option>
+          <option value="cmdinjection">Command injection</option>
+          <option value="deserialization">Insecure deserialization</option>
+          <option value="xxe">XXE</option>
+        </optgroup>
+        <optgroup label="API security">
+          <option value="bola">Broken object-level authorization (API IDOR)</option>
+          <option value="massassign">Mass assignment</option>
+          <option value="jwtflaws">JWT authentication flaws</option>
+        </optgroup>
+        <optgroup label="Authentication & access">
+          <option value="credstuffing">Credential stuffing</option>
+          <option value="passreset">Insecure password reset</option>
+        </optgroup>
+        <optgroup label="Network attacks">
+          <option value="mitm">ARP spoofing and man-in-the-middle</option>
+          <option value="portrecon">Scanning and service enumeration</option>
+        </optgroup>
+        <optgroup label="Active Directory & Windows">
+          <option value="responder">LLMNR/NBT-NS poisoning</option>
+          <option value="kerberoast">Kerberoasting</option>
+          <option value="pth">Pass-the-hash / lateral movement</option>
+        </optgroup>
+        <optgroup label="Cloud security">
+          <option value="s3misconfig">Public cloud storage exposure</option>
+          <option value="imds">SSRF to cloud metadata (IMDS)</option>
+          <option value="exposedsecrets">Hardcoded secrets and exposed keys</option>
+        </optgroup>
+        <optgroup label="Wireless security">
+          <option value="wpa2">WPA2 handshake cracking</option>
+          <option value="eviltwin">Evil twin / rogue access point</option>
+        </optgroup>
+        <optgroup label="Malware & forensics">
+          <option value="phishinganalysis">Phishing email analysis</option>
+          <option value="staticmalware">Static malware triage</option>
+          <option value="memforensics">Memory forensics and triage</option>
+        </optgroup>
+        <optgroup label="SOC & detection">
+          <option value="siemdetect">Writing a detection rule</option>
+          <option value="threathunt">Threat hunting</option>
+          <option value="logtriage">Alert triage and log investigation</option>
+        </optgroup>
+        <optgroup label="Social engineering">
+          <option value="phishingcampaign">Phishing simulation</option>
+        </optgroup>
+        <optgroup label="Cryptography">
+          <option value="weakhash">Password hashing weaknesses</option>
+          <option value="tlsmisconfig">TLS/SSL misconfiguration</option>
+        </optgroup>
       </select>
     </div>
     <div class="picker-field">
@@ -219,7 +265,7 @@
 <footer>
   <div class="wrap">
     <div class="foot-links">
-      <a href="https://www.sarathg.me">The book</a>
+      <a href="https://store.pothi.com/book/sarath-g-certified-and-clueless/" target="_blank" rel="noopener">The book</a>
       <a href="https://labs.sarathg.me">Environments</a>
       <a href="https://sarathg.medium.com">Medium</a>
       <a href="https://github.com/secretguard">GitHub</a>
@@ -564,7 +610,590 @@
           compressed: "A pre-captured log entry showing the same mismatched content in an import response, with the same question asked first."
         }
       }
-    }
+    },
+    bola: {
+      label: "Broken object-level authorization (API IDOR)",
+      sectors: {
+        generic: { scene: "an e-commerce API where GET /api/orders/{id} returns any order by id", stakes: "for an API it is another customer's order, address and items exposed by changing one number" },
+        banking: { scene: "a banking API exposing GET /api/accounts/{id}/transactions with no ownership check", stakes: "for a bank, incrementing that id walks through other customers' transaction histories" },
+        healthcare: { scene: "a patient-portal API serving GET /api/records/{id} to any authenticated caller", stakes: "for healthcare, that is another patient's medical record returned to the wrong person" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Show the learner what an API object reference is: an id in the URL that maps straight to a database row. Draw the request and ask what the server checks before it answers. The holding question: it confirmed you are logged in, but did it confirm the object is yours?",
+          compressed: "One annotated request in a proxy; point at the id and ask what stops you changing it."
+        },
+        attack: {
+          full: "Demonstrate one authorized call, then change the id and watch another user's object come back. Learner repeats on their own account, then hunts an independent endpoint where the id is not a plain integer. Success is explaining which check is missing, not just pulling data.",
+          compressed: "One demo of id-swapping, one guided repeat on the same endpoint."
+        },
+        remediate: {
+          full: "Run the same call against the patched API: the server now checks the object belongs to the caller and returns 403. Same request, different answer. A pentester is supposed to fail here; the 403 is the fix working.",
+          compressed: "One re-run against the patched endpoint, with the ownership check pointed out."
+        },
+        exchange: {
+          full: "Open the API logs. A single session requesting a run of ids that do not belong to it is an obvious pattern. Ask the learner what a defender would alert on, and what an attacker would do to stay under it.",
+          compressed: "A pre-captured log of the id sweep, with the same question asked first."
+        },
+      }
+    },
+    massassign: {
+      label: "Mass assignment",
+      sectors: {
+        generic: { scene: "a SaaS API where PATCH /api/users/me accepts the full user object, including role", stakes: "for a SaaS app, a normal user promotes themselves to admin by adding one field" },
+        banking: { scene: "a banking API update endpoint that binds every posted field onto the account model", stakes: "for a bank, a client sets their own overdraft limit or account flags by adding fields" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain how a framework binds JSON fields straight onto an object. Show the model has fields the form never exposes (role, isAdmin, balance). The holding question: if the server trusts every field you send, what happens when you send a field the UI never showed you?",
+          compressed: "Show the object model next to the form; name the fields the form omits."
+        },
+        attack: {
+          full: "Demonstrate a normal profile update, then resend it with an extra field the UI never renders and watch it take effect. Learner repeats, then finds another endpoint that over-binds. Success is naming which field should never have been client-controlled.",
+          compressed: "One demo adding a privileged field to the request, one guided repeat."
+        },
+        remediate: {
+          full: "Against the patched version the server binds only an allow-list of fields; the injected field is ignored and the response shows no change. The same request now does nothing. That silence is the fix.",
+          compressed: "Re-run the injected request against the allow-listed endpoint."
+        },
+        exchange: {
+          full: "In the logs, the request body carries a field a normal client never sends. Ask the learner how a defender would spot unexpected fields, and why input that looks valid can still be malicious.",
+          compressed: "Pre-captured request body with the rogue field highlighted."
+        },
+      }
+    },
+    jwtflaws: {
+      label: "JWT authentication flaws",
+      sectors: {
+        generic: { scene: "an API that accepts JWTs and, in its vulnerable build, trusts the token's alg header", stakes: "for any API, forging a token means becoming any user, including admin, with no password" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Take apart a JWT: header, payload, signature, base64 not encryption. Show the payload is readable and the signature is the only thing binding it. The holding question: who decides how the signature is verified, the server or the token?",
+          compressed: "Decode one token live; show the payload is plaintext and the signature is the guard."
+        },
+        attack: {
+          full: "Demonstrate flipping alg to none (or signing with a guessed weak secret) and watch the server accept a payload you rewrote. Learner repeats, then tampers a claim (role, sub) on an independent token. Success is explaining why the signature failed to stop them.",
+          compressed: "One demo of an unsigned/none-alg token being accepted."
+        },
+        remediate: {
+          full: "The patched server pins the algorithm and verifies with a strong secret or public key; the forged token is rejected with 401. Same forged token, now refused. The 401 is the win.",
+          compressed: "Re-submit the forged token against the hardened verifier."
+        },
+        exchange: {
+          full: "Logs show a token whose alg is none or whose signature does not verify, arriving with elevated claims. Ask what a defender should log about token validation and how to detect forgery attempts.",
+          compressed: "Pre-captured auth log showing the rejected/forged token."
+        },
+      }
+    },
+    credstuffing: {
+      label: "Credential stuffing",
+      sectors: {
+        generic: { scene: "a login form tested with a list of breached email:password pairs", stakes: "for any service, reused passwords mean a fraction of the list simply logs in" },
+        banking: { scene: "a banking portal login sprayed with credentials from an unrelated breach", stakes: "for a bank, one reused password is direct access to someone's money" },
+        healthcare: { scene: "a patient portal login tried against a public breach corpus", stakes: "for healthcare, a reused password exposes a full medical history" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Separate credential stuffing from brute force: the attacker is not guessing, they are replaying real passwords that leaked elsewhere. Show a breach corpus and one reused pair. The holding question: what does the login do differently for a stuffed valid password versus a random guess? Nothing.",
+          compressed: "Show a breach list and explain replay vs guessing in two minutes."
+        },
+        attack: {
+          full: "Demonstrate an automated run of email:password pairs, watching for the response that differs on success. Learner repeats against test accounts, then reasons about which signal marks a hit. Success is explaining why volume and reuse, not cleverness, make this work.",
+          compressed: "One automated run, learner watching for the success signal."
+        },
+        remediate: {
+          full: "The patched version adds MFA and anomalous-login checks; a correct password alone no longer grants access, and bursts from one source get challenged or blocked. The valid password that worked now stalls. That wall is the fix.",
+          compressed: "Re-run against the MFA-protected login and hit the second factor."
+        },
+        exchange: {
+          full: "Logs show many logins from one source, most failing, a few succeeding, across many distinct accounts, the signature of stuffing rather than one account under brute force. Ask how a SOC separates this from normal traffic.",
+          compressed: "Pre-captured log of the multi-account attempt pattern."
+        },
+      }
+    },
+    passreset: {
+      label: "Insecure password reset",
+      sectors: {
+        generic: { scene: "an app whose password-reset flow leaks or accepts a predictable/reusable token", stakes: "for any app, a broken reset lets an attacker take over an account they never had a password for" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Walk the reset flow end to end: request, token, link, new password. Show where the token comes from and how the server ties it to the account. The holding question: what stops someone requesting a reset for an account that is not theirs and using the token anyway?",
+          compressed: "Diagram the reset flow and mark where the token is generated and checked."
+        },
+        attack: {
+          full: "Demonstrate the weakness, a token that is guessable, does not expire, is not bound to the user, or leaks in the response. Learner repeats, then probes a second account. Success is explaining exactly which property of the token failed.",
+          compressed: "One demo abusing the weak token, one guided repeat."
+        },
+        remediate: {
+          full: "The patched flow issues a random, single-use, expiring token bound to the account and never returned in the response. The old trick returns an error. A pentester is supposed to fail; that error is the fix.",
+          compressed: "Re-run the takeover attempt against the hardened flow."
+        },
+        exchange: {
+          full: "Logs show reset requests and token use, mismatched IPs, a token used for a different account, resets never requested by the user. Ask what a defender would alert on across the reset lifecycle.",
+          compressed: "Pre-captured reset log with the suspicious sequence flagged."
+        },
+      }
+    },
+    mitm: {
+      label: "ARP spoofing and man-in-the-middle",
+      sectors: {
+        generic: { scene: "a lab LAN where the attacker poisons ARP to sit between a client and the gateway", stakes: "for any network, sitting in the middle means reading or altering traffic that was never meant for you" },
+        defence: { scene: "an operational LAN segment where an attacker intercepts host-to-server traffic", stakes: "for a defence network, intercepted traffic can mean credentials and orders in the clear" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain how a switch and ARP decide where a frame goes, and that ARP has no authentication, a host simply believes the last reply. Sketch client, gateway, attacker. The holding question: if you can lie about which MAC owns the gateway's IP, whose traffic flows through you?",
+          compressed: "Draw the LAN and show ARP takes any reply on trust."
+        },
+        attack: {
+          full: "Demonstrate poisoning the client and gateway so traffic routes through the attacker, then read a plaintext credential in the captured stream. Learner repeats and captures a different protocol. Success is explaining why the switch happily cooperated.",
+          compressed: "One demo of the poisoning plus a single captured plaintext credential."
+        },
+        remediate: {
+          full: "With mitigations in place, dynamic ARP inspection or static entries, plus everything over TLS, the poisoning is dropped or the captured traffic is unreadable. The same attack yields nothing usable. That nothing is the point.",
+          compressed: "Re-run against the hardened segment; show the capture is encrypted or blocked."
+        },
+        exchange: {
+          full: "Switch on the defender's view: a flood of gratuitous ARP replies and a MAC suddenly claiming the gateway's IP is a loud, detectable event. Ask what a defender monitors on the LAN to catch this.",
+          compressed: "Pre-captured ARP-table churn and duplicate-IP alert."
+        },
+      }
+    },
+    portrecon: {
+      label: "Scanning and service enumeration",
+      sectors: {
+        generic: { scene: "a subnet the learner maps from an unknown range to a list of live services and versions", stakes: "for any target, what you can see is the attack surface; recon decides where everything else starts" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain that a port is a door and a service is who answers behind it, and that a version string often tells you the known weaknesses. The holding question: before any exploit, what does the target actually expose, and what is it running?",
+          compressed: "Show one host, one open port, one banner; explain door vs service."
+        },
+        attack: {
+          full: "Demonstrate a staged scan, host discovery, then ports, then service and version detection, narrating what each result means. Learner repeats on their own range, then reasons about a host that hides behind a firewall. Success is reading the map, not just producing it.",
+          compressed: "One guided scan; learner interprets the service list."
+        },
+        remediate: {
+          full: "Against the hardened network, unused ports are closed, versions are masked, and noisy scans are rate-limited or dropped. The map comes back sparse. A pentester is supposed to fail; the empty map is defenders doing their job.",
+          compressed: "Re-scan the hardened host and compare the attack surface."
+        },
+        exchange: {
+          full: "From the defender's side, a scan is one source touching many ports across many hosts in a short window, an unmistakable pattern. Ask how a SOC tunes detection without drowning in false positives.",
+          compressed: "Pre-captured IDS view of the scan sweep."
+        },
+      }
+    },
+    responder: {
+      label: "LLMNR/NBT-NS poisoning",
+      sectors: {
+        generic: { scene: "a Windows lab where the attacker answers broadcast name lookups and captures hashes", stakes: "for a Windows network, a mistyped share name can hand an attacker a crackable credential" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain how Windows resolves a name it cannot find in DNS: it shouts on the LAN via LLMNR/NBT-NS and trusts whoever answers. The holding question: if you answer every broadcast lookup claiming to be the host, what does the client send you?",
+          compressed: "Show the fallback-resolution broadcast and that any host may answer."
+        },
+        attack: {
+          full: "Demonstrate running a responder tool, capturing a NetNTLM hash when a client looks up a name, then cracking it offline. Learner repeats and captures a second hash. Success is explaining why the client authenticated to a stranger.",
+          compressed: "One demo capturing and cracking a single hash."
+        },
+        remediate: {
+          full: "With LLMNR/NBT-NS disabled and SMB signing enforced, the broadcast never happens and relays fail. The capture is empty. That empty capture is the mitigation working.",
+          compressed: "Re-run in the hardened lab; show no hashes captured."
+        },
+        exchange: {
+          full: "On the defender's side, a host answering many name lookups it has no business answering is anomalous and logged. Ask what a SOC watches for to catch poisoning and relay.",
+          compressed: "Pre-captured log of the rogue responder's replies."
+        },
+      }
+    },
+    kerberoast: {
+      label: "Kerberoasting",
+      sectors: {
+        generic: { scene: "an Active Directory lab where a low-privileged user requests service tickets and cracks them offline", stakes: "for any AD, a weak service-account password becomes domain foothold without touching that account" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain Kerberos service tickets: any domain user can request a ticket for a service, and part of it is encrypted with the service account's password hash. The holding question: if you can request that ticket as any user, what stops you cracking it offline at your leisure?",
+          compressed: "Show the ticket request and where the service-account hash lives inside it."
+        },
+        attack: {
+          full: "Demonstrate enumerating accounts with SPNs, requesting their tickets, and cracking a weak one offline. Learner repeats against another SPN, then reasons about why a strong password defeats this. Success is explaining the offline-crack step, not just running the tool.",
+          compressed: "One demo: request one SPN's ticket and crack it."
+        },
+        remediate: {
+          full: "With long, random service-account passwords (or gMSAs), the offline crack fails. Same request, uncrackable ticket. A pentester is supposed to fail; the uncracked ticket is the fix.",
+          compressed: "Re-run against the hardened service account; the crack does not land."
+        },
+        exchange: {
+          full: "Defenders see a single account requesting many service tickets in a burst, an odd, loggable pattern (event 4769). Ask what a SOC alerts on and how an attacker would slow down to hide.",
+          compressed: "Pre-captured 4769 burst from one requester."
+        },
+      }
+    },
+    pth: {
+      label: "Pass-the-hash / lateral movement",
+      sectors: {
+        generic: { scene: "a Windows lab where a captured NTLM hash is reused to authenticate without the password", stakes: "for any Windows estate, one harvested hash can move an attacker host to host across the domain" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain that NTLM authentication proves you hold the hash, not that you know the password, so the hash itself is a credential. The holding question: if the hash is all the protocol needs, why does stealing it beat cracking it?",
+          compressed: "Show that the hash, not the plaintext, is what the protocol checks."
+        },
+        attack: {
+          full: "Demonstrate reusing a local admin hash to authenticate to a second machine and run commands. Learner repeats to a third host, then reasons about why shared local-admin passwords make this spread. Success is explaining the trust that let the hash travel.",
+          compressed: "One demo of reusing a hash to reach a second host."
+        },
+        remediate: {
+          full: "With unique local-admin passwords (LAPS), tiered admin and credential guard, the reused hash opens nothing. The same hash now fails everywhere but its origin. That containment is the fix.",
+          compressed: "Re-run the reuse against the hardened hosts and get denied."
+        },
+        exchange: {
+          full: "Defenders see the same account authenticating across many machines in quick succession from an unusual source, classic lateral movement. Ask what a SOC correlates to catch it early.",
+          compressed: "Pre-captured logon telemetry showing the spread."
+        },
+      }
+    },
+    s3misconfig: {
+      label: "Public cloud storage exposure",
+      sectors: {
+        generic: { scene: "a cloud storage bucket left readable to the world, holding real-looking files", stakes: "for any org, a public bucket is a silent data breach that needs no exploit at all" },
+        healthcare: { scene: "a storage bucket of patient documents readable without authentication", stakes: "for healthcare, an open bucket is medical records indexed and downloadable by anyone" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain object storage and its access policy: a bucket is private only if the policy says so, and one wrong setting makes it world-readable. The holding question: who can list and read this bucket, and how would you find out from the outside?",
+          compressed: "Show a bucket policy and the one line that decides public vs private."
+        },
+        attack: {
+          full: "Demonstrate discovering and listing an open bucket and pulling a file. Learner repeats against another bucket name, then reasons about how attackers enumerate buckets at scale. Success is explaining that no vulnerability was exploited, only a setting.",
+          compressed: "One demo listing and reading an exposed bucket."
+        },
+        remediate: {
+          full: "With the policy corrected to private and public-access blocks enabled, the same request returns access denied. Nothing to exploit, nothing to read. That denial is the whole fix.",
+          compressed: "Re-request the object against the corrected policy."
+        },
+        exchange: {
+          full: "Cloud access logs show anonymous or unusual reads and mass listing. Ask what a defender monitors (access logs, config drift, public-access alarms) and why prevention beats detection here.",
+          compressed: "Pre-captured access log of the anonymous downloads."
+        },
+      }
+    },
+    imds: {
+      label: "SSRF to cloud metadata (IMDS)",
+      sectors: {
+        generic: { scene: "a cloud-hosted app with an SSRF that can reach the instance metadata service", stakes: "for any cloud workload, reaching metadata can hand an attacker the instance's credentials" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain the metadata endpoint: a link-local address the instance queries for its own config and temporary credentials. Then explain SSRF, making the server fetch a URL you choose. The holding question: if you can make the app fetch any URL, what happens when that URL is the metadata service?",
+          compressed: "Show the metadata address and the SSRF sink that can reach it."
+        },
+        attack: {
+          full: "Demonstrate an SSRF that returns metadata, then role credentials. Learner repeats via a different SSRF sink, then reasons about what those credentials unlock. Success is explaining the pivot from SSRF to cloud identity.",
+          compressed: "One demo: SSRF to metadata to temporary credentials."
+        },
+        remediate: {
+          full: "With IMDSv2 (session-token required), egress limits and SSRF input validation, the fetch is refused and no credentials return. Same SSRF, dead end. That dead end is the fix.",
+          compressed: "Re-run the SSRF against the IMDSv2-hardened instance."
+        },
+        exchange: {
+          full: "Metadata access from the app tier, or credential use from an unexpected IP, is anomalous and loggable. Ask what a defender correlates between app logs and cloud audit logs.",
+          compressed: "Pre-captured audit log showing metadata credential misuse."
+        },
+      }
+    },
+    exposedsecrets: {
+      label: "Hardcoded secrets and exposed keys",
+      sectors: {
+        generic: { scene: "a codebase and config where API keys and cloud credentials sit in plaintext", stakes: "for any org, one leaked key in a repo or bundle can open production to a stranger" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain what a secret is and where they hide: source, git history, front-end bundles, env files, container images. The holding question: everything a program needs to authenticate is somewhere in what it ships, so where would you look first?",
+          compressed: "Show one secret in a repo and one in a shipped bundle."
+        },
+        attack: {
+          full: "Demonstrate finding a live key with a secret scanner and history search, then using it against the service, read-only, safely. Learner repeats in another location, then reasons about blast radius. Success is explaining where the key came from and what it grants.",
+          compressed: "One demo: scan, find a key, confirm what it unlocks."
+        },
+        remediate: {
+          full: "With the key rotated, moved to a secrets manager and scanning enforced in CI, the found key is dead and no new ones ship. The old key now authenticates to nothing. That is the fix.",
+          compressed: "Re-test the rotated key and confirm it is revoked."
+        },
+        exchange: {
+          full: "Usage of a leaked key often comes from an unexpected IP or at an odd time. Ask what a defender monitors (key usage anomalies, secret-scanning alerts) and why rotation must follow discovery immediately.",
+          compressed: "Pre-captured log of anomalous key usage."
+        },
+      }
+    },
+    wpa2: {
+      label: "WPA2 handshake cracking",
+      sectors: {
+        generic: { scene: "a lab Wi-Fi network whose WPA2 handshake is captured and cracked offline", stakes: "for any wireless network, a weak passphrase is the whole perimeter, cracked at leisure" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain the WPA2 four-way handshake and that capturing it lets you guess the passphrase offline, no further contact with the network. The holding question: if the handshake is broadcast when a client joins, what stops you capturing it and grinding a wordlist?",
+          compressed: "Show the handshake capture and explain the offline guess."
+        },
+        attack: {
+          full: "Demonstrate capturing a handshake (deauth to force a rejoin) and cracking a weak passphrase offline. Learner repeats the capture, then reasons about why passphrase strength is everything. Success is explaining why the crack is offline and unstoppable once captured.",
+          compressed: "One demo: capture a handshake and crack a weak key."
+        },
+        remediate: {
+          full: "With a long random passphrase (or WPA3/enterprise auth), the same captured handshake resists the wordlist. Capture succeeds, crack fails. That failed crack is the defence.",
+          compressed: "Re-run the crack against the strong-passphrase capture."
+        },
+        exchange: {
+          full: "From the defender's side, repeated deauth frames and rogue capture behaviour are detectable by wireless monitoring. Ask what a defender watches for and why WPA3/enterprise changes the game.",
+          compressed: "Pre-captured wireless log showing the deauth burst."
+        },
+      }
+    },
+    eviltwin: {
+      label: "Evil twin / rogue access point",
+      sectors: {
+        generic: { scene: "a lab where the attacker stands up a look-alike SSID and captures what clients send", stakes: "for any org, a convincing fake AP harvests credentials from staff who just want Wi-Fi" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain that clients trust an SSID by name and will reconnect to the strongest matching one. The holding question: if a device cannot tell your access point from the real one, whose network does it join?",
+          compressed: "Show two APs with the same name and which one the client picks."
+        },
+        attack: {
+          full: "Demonstrate a rogue AP with a captive portal capturing a submitted credential in the lab. Learner repeats the setup, then reasons about the human trust being exploited. Success is explaining why the name, not the network, was the vulnerability.",
+          compressed: "One demo of the look-alike AP and captive portal."
+        },
+        remediate: {
+          full: "With 802.1X/enterprise auth and server-certificate validation, clients refuse the impostor because it cannot present the right certificate. The fake AP collects nothing. That refusal is the fix.",
+          compressed: "Re-run against clients configured to validate the server cert."
+        },
+        exchange: {
+          full: "Wireless monitoring flags an unexpected AP broadcasting a known SSID. Ask what a defender deploys (rogue-AP detection, WIPS) and how user training reduces the human half.",
+          compressed: "Pre-captured WIPS alert on the duplicate SSID."
+        },
+      }
+    },
+    phishinganalysis: {
+      label: "Phishing email analysis",
+      sectors: {
+        generic: { scene: "a reported email the learner dissects: headers, links, and an attachment", stakes: "for any org, one analyst's verdict on one email decides whether an incident starts or stops" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain what an email actually is: headers (who really sent it), a body, and payloads (links, attachments). The holding question: the display name says one thing, so what does the envelope and header path actually say about origin?",
+          compressed: "Show one header block and where the real sender hides."
+        },
+        attack: {
+          full: "Demonstrate reading the headers, detonating the link/attachment safely in a sandbox, and reaching a verdict with evidence. Learner repeats on a second sample, then reasons about indicators. Success is a defensible verdict, not a guess.",
+          compressed: "One guided analysis to a documented verdict."
+        },
+        remediate: {
+          full: "This one inverts the frame: 'remediate' is the response. Show the containment, blocking the sender/URL, pulling the mail from other inboxes, and confirm a re-test no longer reaches users. The blocked re-delivery is the fix working.",
+          compressed: "Walk the containment steps and confirm the resend is blocked."
+        },
+        exchange: {
+          full: "Now take the attacker's seat: what made this email convincing, what infrastructure sent it, how would you have made it evade the filter? Understanding the send side sharpens the analysis side.",
+          compressed: "Discuss what the sender did and how to detect the next one."
+        },
+      }
+    },
+    staticmalware: {
+      label: "Static malware triage",
+      sectors: {
+        generic: { scene: "a suspicious binary the learner triages without executing it", stakes: "for any responder, a fast, safe verdict on a file decides how big the incident is" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain what a file tells you before it runs: type, hashes, strings, imports, packing. The holding question: what can you learn about intent from the file itself, before you risk running it?",
+          compressed: "Show hashes, strings and imports on one sample."
+        },
+        attack: {
+          full: "Demonstrate a triage pass, hash lookup, strings, import table, packer check, to a preliminary verdict. Learner repeats on a second file, then reasons about what warrants dynamic analysis. Success is explaining the indicators behind the verdict.",
+          compressed: "One guided static pass to a preliminary verdict."
+        },
+        remediate: {
+          full: "The defensive close: turn indicators into detection, hashes and strings into a YARA rule or block, and confirm the rule flags the sample. The rule firing is the win.",
+          compressed: "Write one detection from the indicators and test it on the sample."
+        },
+        exchange: {
+          full: "Take the adversary view: how would packing, obfuscation or living-off-the-land defeat your static pass? Understanding evasion is what makes the next triage better.",
+          compressed: "Discuss evasions that would blind the static pass."
+        },
+      }
+    },
+    memforensics: {
+      label: "Memory forensics and triage",
+      sectors: {
+        generic: { scene: "a memory image from a suspected-compromised host the learner analyses", stakes: "for any responder, memory holds what disk hides: live processes, injected code, network state" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain what lives in RAM that never touches disk: running processes, open connections, injected code, keys. The holding question: if malware only ever ran in memory, where is the only place you will find it?",
+          compressed: "Show a process list and a network table from an image."
+        },
+        attack: {
+          full: "Demonstrate a triage flow, process tree, suspicious connections, injected regions, to a finding. Learner repeats on another image, then reasons about what confirms compromise. Success is explaining the evidence chain, not just running plugins.",
+          compressed: "One guided pass to a single confirmed finding."
+        },
+        remediate: {
+          full: "The defensive close: convert the finding into a host indicator and detection, and confirm it would flag the behaviour going forward. The detection is the fix.",
+          compressed: "Turn the finding into one host-based detection and test it."
+        },
+        exchange: {
+          full: "Adversary view: how would an attacker minimise their memory footprint or unhook their artefacts? Knowing the evasions sharpens the hunt.",
+          compressed: "Discuss anti-forensics that would hide the artefact."
+        },
+      }
+    },
+    siemdetect: {
+      label: "Writing a detection rule",
+      sectors: {
+        generic: { scene: "a SIEM with logs of a known attack the learner must reliably detect", stakes: "for any SOC, a rule that fires on the attack and stays quiet otherwise is the whole job" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain what a detection is: a hypothesis about what the attack leaves behind, expressed as a query over logs. The holding question: what specific, repeatable trace does this attack always produce, and what does normal traffic never produce?",
+          compressed: "Show the attack's log trace next to a normal one."
+        },
+        attack: {
+          full: "Demonstrate building a rule from the trace, tuning it against real data until it catches the attack without drowning in false positives. Learner repeats for a variant, then reasons about precision vs recall. Success is explaining why the rule fires when it should.",
+          compressed: "One rule built and tuned against the sample logs."
+        },
+        remediate: {
+          full: "Here 'attack' and 'remediate' swap places: replay the attack and confirm the rule fires, then replay benign traffic and confirm it stays silent. A quiet rule on benign data is as important as a loud one on the attack.",
+          compressed: "Replay attack and benign traffic; confirm fire and silence."
+        },
+        exchange: {
+          full: "Take the attacker's seat: how would you change timing, volume or encoding to slip under this rule? Every detection has an evasion, and knowing it is how you harden the rule.",
+          compressed: "Discuss how an attacker would evade the rule you wrote."
+        },
+      }
+    },
+    threathunt: {
+      label: "Threat hunting",
+      sectors: {
+        generic: { scene: "a dataset with no alert, where the learner hunts for a compromise on a hypothesis", stakes: "for any SOC, hunting finds the intrusion the alerts missed, before it becomes an incident" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain hunting as hypothesis-driven search, not alert triage: you assume a technique is present and go looking for its traces. The holding question: if the tools did not alert, what would this specific technique still have left behind?",
+          compressed: "State one hypothesis and the trace it predicts."
+        },
+        attack: {
+          full: "Demonstrate a hunt, form a hypothesis, query for its trace, follow the thread to a finding or a clean result. Learner repeats with a new hypothesis, then reasons about what a null result proves. Success is a defensible conclusion either way.",
+          compressed: "One guided hunt from hypothesis to conclusion."
+        },
+        remediate: {
+          full: "The defensive close: turn a productive hunt into a standing detection so the next occurrence alerts automatically. Confirm the new rule fires on the traces you found. Operationalising the hunt is the win.",
+          compressed: "Convert the hunt's finding into a standing detection."
+        },
+        exchange: {
+          full: "Attacker view: how would the adversary have avoided the trace you hunted on? Understanding what they would do differently is what makes the next hypothesis sharper.",
+          compressed: "Discuss how the attacker would have stayed off your radar."
+        },
+      }
+    },
+    logtriage: {
+      label: "Alert triage and log investigation",
+      sectors: {
+        generic: { scene: "a fired alert the learner must confirm or dismiss from the surrounding logs", stakes: "for any SOC, the difference between a false positive and a real breach is one careful investigation" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain what an alert is and is not: a signal that something matched a rule, not proof of compromise. The holding question: what surrounding evidence would confirm this alert is real, and what would clear it?",
+          compressed: "Show one alert and the logs around it."
+        },
+        attack: {
+          full: "Demonstrate pivoting from the alert through the logs, user, host, timeline, to a verdict with evidence. Learner repeats on a second alert, then reasons about escalation. Success is a defensible confirm-or-dismiss, not a gut call.",
+          compressed: "One guided triage to a documented verdict."
+        },
+        remediate: {
+          full: "The defensive close: if real, walk the containment and confirm the threat is stopped; if a false positive, tune the rule so it stops crying wolf. Either outcome improves the next shift.",
+          compressed: "Contain the real case or tune the noisy rule; confirm the result."
+        },
+        exchange: {
+          full: "Attacker view: what would the intruder have done to make this alert look like noise, so an analyst would dismiss it? Knowing that is how you avoid dismissing the real one.",
+          compressed: "Discuss how an attacker blends into false-positive noise."
+        },
+      }
+    },
+    phishingcampaign: {
+      label: "Phishing simulation",
+      sectors: {
+        generic: { scene: "an authorised phishing simulation the learner plans, sends and measures", stakes: "for any org, a well-run simulation turns an abstract risk into a measured, teachable moment" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain the anatomy of a phish: pretext, sender, lure, landing, and the human trust each step borrows. The holding question: what makes a person click, and how would you measure that without punishing them?",
+          compressed: "Break one convincing phish into its trust-borrowing parts."
+        },
+        attack: {
+          full: "Demonstrate building an authorised campaign, pretext, safe landing page, tracking, on a consented audience. Learner drafts a variant, then reasons about ethics and measurement. Success is explaining what the click-through actually teaches.",
+          compressed: "One authorised campaign built with tracking and consent."
+        },
+        remediate: {
+          full: "The defensive close: from the results, deliver targeted training and add technical controls (banners, reporting button, filtering), then confirm a re-test shows more reports and fewer clicks. Improvement is the fix.",
+          compressed: "Turn results into training and controls; re-test the group."
+        },
+        exchange: {
+          full: "Take the defender's seat fully: from the reports and filters, how quickly would a real version be caught, and what would the attacker change next? Both sides sharpen each other.",
+          compressed: "Discuss detection of the real thing and the attacker's next move."
+        },
+      }
+    },
+    weakhash: {
+      label: "Password hashing weaknesses",
+      sectors: {
+        generic: { scene: "a leaked credentials table the learner cracks, then compares against a strong scheme", stakes: "for any org, how you store passwords decides whether a database leak is a catastrophe or a shrug" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain hashing versus encryption, and why fast hashes (MD5, unsalted SHA) fall to wordlists and rainbow tables while slow, salted schemes do not. The holding question: once the database leaks, what decides whether the passwords fall in minutes or never?",
+          compressed: "Show one MD5 hash cracked instantly versus a bcrypt hash that resists."
+        },
+        attack: {
+          full: "Demonstrate cracking a batch of weak, unsalted hashes with a wordlist. Learner repeats on another set, then reasons about salting and cost factors. Success is explaining why speed and missing salt made the crack trivial.",
+          compressed: "One demo cracking a weak-hash set."
+        },
+        remediate: {
+          full: "Re-run against the same passwords stored with a slow, salted scheme (bcrypt/argon2): the wordlist grinds and the crack stalls. Same leaked table, uncrackable. That stall is the fix.",
+          compressed: "Attempt the crack against the salted, slow-hashed set."
+        },
+        exchange: {
+          full: "Defender view: what does a leak look like on your side, and how would you detect credential-stuffing that follows a leak elsewhere? Storage strength and detection work together.",
+          compressed: "Discuss detecting the stuffing that follows a leak."
+        },
+      }
+    },
+    tlsmisconfig: {
+      label: "TLS/SSL misconfiguration",
+      sectors: {
+        generic: { scene: "a service whose TLS allows weak protocols and ciphers the learner probes", stakes: "for any service, weak TLS quietly undermines the encryption everyone assumes is protecting them" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Explain what TLS negotiates, protocol version and cipher, and that the weakest thing both sides accept is what you get. The holding question: if a server still accepts an obsolete protocol, who decides whether a connection is actually safe?",
+          compressed: "Show a handshake and where version and cipher are chosen."
+        },
+        attack: {
+          full: "Demonstrate scanning the endpoint to reveal weak protocols, ciphers or an expired/mismatched certificate, and explain the concrete risk of each. Learner scans a second endpoint, then reasons about impact. Success is explaining why each finding matters, not just listing them.",
+          compressed: "One guided TLS scan interpreted finding by finding."
+        },
+        remediate: {
+          full: "Re-scan after hardening, modern protocols only, strong ciphers, valid certificate: the weak options are gone. Same scan, clean result. That clean result is the fix.",
+          compressed: "Re-scan the hardened endpoint and compare."
+        },
+        exchange: {
+          full: "Defender view: how would you detect downgrade attempts or the use of a deprecated cipher in your traffic, and why does configuration drift bring these back? Monitoring keeps the fix in place.",
+          compressed: "Discuss detecting downgrade and drift over time."
+        },
+      }
+    },
   };
 
   const SECTOR_LABEL = { banking: 'Banking', government: 'Government', generic: 'Generic / e-commerce', healthcare: 'Healthcare', defence: 'Defence' };
@@ -582,7 +1211,7 @@
     `;
   }
 
-  function renderOutline(topic, sector, time){
+  function renderOutline(topic, sector, time, requestedSector){
     const block = LIBRARY[topic];
     const sec = block.sectors[sector];
     const t = TIME[time];
@@ -621,6 +1250,7 @@
           <button class="btn btn-ghost" id="copyOutlineBtn">Copy text</button>
         </div>
       </div>
+      ${requestedSector ? `<div class="outline-scene" style="border-left:3px solid var(--amber)">Not sector-specialised for <b>${SECTOR_LABEL[requestedSector] || requestedSector}</b> yet, so this is the general version. Every block here is written, not generated. For a ${SECTOR_LABEL[requestedSector] || requestedSector}-specific build, <a href="${BOOKING_LINK}" style="color:var(--amber)">reach out</a>.</div>` : ''}
       <div class="outline-scene">Session runs against <b>${sec.scene}</b>. ${sec.stakes.charAt(0).toUpperCase() + sec.stakes.slice(1)}.</div>
       ${stagesHtml}
     `;
@@ -652,16 +1282,20 @@
     const area = document.getElementById('resultArea');
 
     if(!topic || !sector || !time){
-      area.innerHTML = '<div class="empty-state">Pick a vulnerability, a sector, and a time budget, then build the outline.</div>';
+      area.innerHTML = '<div class="empty-state">Pick a topic, a sector, and a time budget, then build the outline.</div>';
       return;
     }
 
-    if(!LIBRARY[topic] || !COVERED_SECTORS.includes(sector)){
-      renderFallback(topic, sector);
-      return;
+    const block = LIBRARY[topic];
+    if(!block){ renderFallback(topic, sector); return; }
+
+    let useSector = sector, requested = null;
+    if(!block.sectors[sector]){
+      if(block.sectors.generic){ useSector = 'generic'; requested = sector; }
+      else { renderFallback(topic, sector); return; }
     }
 
-    renderOutline(topic, sector, time);
+    renderOutline(topic, useSector, time, requested);
   });
 </script>
 
