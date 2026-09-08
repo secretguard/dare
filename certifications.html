@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DARE for certification programs — CEH, Security+, OSCP, SC-200 &amp; more</title>
+<meta name="description" content="Apply the DARE Framework inside common certification programs: CEH, CompTIA Security+, PenTest+, CySA+, OSCP, CPENT, SC-200, AWS Security, AZ-500, CHFI and more. Map exam objectives to hands-on sessions.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="DARE for certification programs">
+<meta property="og:description" content="Apply the DARE Framework inside common certification programs: CEH, CompTIA Security+, PenTest+, CySA+, OSCP, CPENT, SC-200, AWS Security, AZ-500, CHFI and more. Map exam objectives to hands-on sessions.">
+<meta property="og:url" content="https://dare.sarathg.me/certifications.html">
+<meta property="og:image" content="https://dare.sarathg.me/og/index.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="DARE use cases | Sarath G">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DARE for certification programs">
+<meta name="twitter:description" content="Apply the DARE Framework inside common certification programs: CEH, CompTIA Security+, PenTest+, CySA+, OSCP, CPENT, SC-200, AWS Security, AZ-500, CHFI and more. Map exam objectives to hands-on sessions.">
+<meta name="twitter:image" content="https://dare.sarathg.me/og/index.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,600&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#0a0e1a; --surface:#121a2c; --surface-2:#171f34; --line:#26304a;
+    --ink:#eef1f7; --ink-dim:#8a93ab; --ink-faint:#4c5570;
+    --amber:#f2a154; --red:#e2554f; --green:#69b98a; --cyan:#4fd8e0;
+    --serif:'Playfair Display', Georgia, serif;
+    --sans:'DM Sans', -apple-system, sans-serif;
+    --mono:'JetBrains Mono', 'Courier New', monospace;
+    --container: 880px;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:var(--void); color:var(--ink); font-family:var(--sans); line-height:1.5; }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:var(--container); margin:0 auto; padding:0 24px; }
+  ::selection{ background:var(--amber); color:var(--void); }
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--amber); outline-offset:2px; border-radius:2px; }
+
+  /* ---------- nav ---------- */
+  .nav{ position:sticky; top:0; z-index:50; background:rgba(10,14,26,0.85); backdrop-filter:blur(10px); border-bottom:1px solid var(--line); }
+  .nav-inner{ display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1080px; margin:0 auto; position:relative; }
+  .nav-mark{ font-family:var(--mono); font-weight:600; font-size:14px; letter-spacing:0.08em; color:var(--ink); display:flex; align-items:center; gap:8px; }
+  .nav-mark .dot{ width:7px; height:7px; border-radius:50%; background:var(--amber); box-shadow:0 0 8px var(--amber); }
+  .nav-links{ display:flex; gap:28px; font-family:var(--mono); font-size:12.5px; color:var(--ink-dim); }
+  .nav-links a{ transition:color .2s ease; white-space:nowrap; }
+  .nav-links a:hover{ color:var(--ink); }
+  .nav-links a.active{ color:var(--amber); }
+  .nav-book{ color:var(--amber) !important; }
+  .nav-toggle{ display:none; background:none; border:1px solid var(--line); border-radius:4px; width:34px; height:34px; color:var(--ink); font-family:var(--mono); font-size:16px; cursor:pointer; align-items:center; justify-content:center; }
+  @media (max-width:760px){
+    .nav-links{ display:flex; flex-direction:column; gap:0; position:absolute; top:100%; left:0; right:0; background:var(--void); border-bottom:1px solid var(--line); max-height:0; overflow:hidden; transition:max-height .25s ease; }
+    .nav-links.open{ max-height:320px; }
+    .nav-links a{ padding:14px 24px; border-top:1px solid var(--line); }
+    .nav-toggle{ display:flex; }
+  }
+
+  /* ---------- header ---------- */
+  .page-head{ padding:56px 0 24px; }
+  .eyebrow{ font-family:var(--mono); font-size:11.5px; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:16px; display:block; }
+  .page-head h1{ font-family:var(--serif); font-weight:900; font-size:clamp(30px,4vw,44px); color:var(--ink); margin-bottom:16px; letter-spacing:-0.01em; }
+  .page-head p{ color:var(--ink-dim); font-size:15.5px; line-height:1.75; max-width:64ch; margin-bottom:14px; }
+
+  /* ---------- jump nav ---------- */
+  .jump-nav{ display:flex; gap:10px; flex-wrap:wrap; padding:24px 0 48px; }
+  .jump-chip{
+    font-family:var(--mono); font-size:12px; letter-spacing:0.02em; color:var(--ink-dim);
+    border:1px solid var(--line); border-radius:20px; padding:8px 16px; transition:all .2s ease;
+  }
+  .jump-chip:hover{ border-color:var(--ink-dim); color:var(--ink); }
+  .jump-chip .n{ font-weight:600; margin-right:6px; }
+  .jump-chip.jcA .n{ color:var(--red); } .jump-chip.jcB .n{ color:var(--amber); }
+  .jump-chip.jcC .n{ color:var(--green); } .jump-chip.jcD .n{ color:var(--cyan); }
+
+  /* ---------- use case ---------- */
+  .usecase{ padding:52px 0; border-top:1px solid var(--line); }
+  .usecase:first-of-type{ border-top:none; }
+  .uc-eyebrow{ font-family:var(--mono); font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:10px; }
+  .usecase h2{ font-family:var(--serif); font-weight:700; font-size:clamp(24px,3vw,32px); margin-bottom:16px; }
+  .uc-scene{ color:var(--ink-dim); font-size:15.5px; line-height:1.75; max-width:66ch; margin-bottom:36px; }
+  .uc-scene em{ color:var(--ink); font-style:normal; font-family:var(--mono); font-size:14px; }
+
+  .uc-stage{ display:grid; grid-template-columns:110px 1fr; gap:24px; padding:22px 0; border-top:1px solid var(--line); }
+  .uc-stage:first-of-type{ border-top:none; }
+  .uc-stage-label{ display:flex; align-items:baseline; gap:8px; }
+  .uc-stage-letter{ font-family:var(--serif); font-weight:900; font-size:28px; line-height:1; }
+  .uc-stage-name{ font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--ink-faint); }
+  .stD .uc-stage-letter{ color:var(--amber); } .stA .uc-stage-letter{ color:var(--red); }
+  .stR .uc-stage-letter{ color:var(--green); } .stE .uc-stage-letter{ color:var(--cyan); }
+  .uc-stage p{ color:var(--ink-dim); font-size:14.5px; line-height:1.75; max-width:62ch; }
+  .uc-stage.stE{ background:linear-gradient(90deg, rgba(79,216,224,0.06), transparent); border-radius:6px; padding-left:14px; padding-right:14px; margin-left:-14px; margin-right:-14px; }
+  .uc-stage.stE p{ color:var(--ink); }
+
+  @media (max-width:640px){
+    .uc-stage{ grid-template-columns:1fr; gap:8px; }
+  }
+
+  .uc-close{
+    margin-top:8px; font-family:var(--mono); font-size:12.5px; color:var(--ink-faint);
+    border-top:1px solid var(--line); padding-top:18px;
+  }
+  .uc-close a{ color:var(--amber); }
+  .uc-close a:hover{ text-decoration:underline; }
+
+  /* ---------- closing cta ---------- */
+  .cta-band{
+    text-align:center; padding:64px 0 80px; border-top:1px solid var(--line);
+  }
+  .cta-band h2{ font-family:var(--serif); font-weight:700; font-size:clamp(22px,3vw,30px); margin-bottom:14px; }
+  .cta-band p{ color:var(--ink-dim); font-size:15px; max-width:52ch; margin:0 auto 26px; line-height:1.7; }
+  .cta-row{ display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+  .btn{ font-family:var(--mono); font-size:13.5px; letter-spacing:0.03em; padding:14px 24px; border-radius:3px; cursor:pointer; transition:all .2s ease; display:inline-flex; align-items:center; gap:8px; border:1px solid transparent; }
+  .btn-primary{ background:var(--amber); color:var(--void); }
+  .btn-primary:hover{ background:#ffb56b; transform:translateY(-1px); }
+  .btn-ghost{ border-color:var(--line); color:var(--ink); background:transparent; }
+  .btn-ghost:hover{ border-color:var(--ink-dim); background:var(--surface); }
+
+  footer{ padding:56px 0 64px; border-top:1px solid var(--line); }
+  .foot-links{ display:flex; justify-content:center; gap:22px; flex-wrap:wrap; font-family:var(--mono); font-size:11.5px; color:var(--ink-dim); margin-bottom:22px; }
+  .foot-links a:hover{ color:var(--ink); }
+  .bottom-note{ text-align:center; font-family:var(--mono); font-size:11px; color:var(--ink-faint); }
+
+  /* certifications */
+  .fit-note{ background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:0 8px 8px 0; padding:22px 24px; margin:8px 0 44px; }
+  .fit-note p{ color:var(--ink-dim); font-size:15px; line-height:1.75; max-width:70ch; }
+  .fit-note b{ color:var(--ink); }
+  .fit-note a{ color:var(--amber); }
+  .cert-section{ margin:0 0 40px; }
+  .cert-cat{ font-family:var(--mono); font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-faint); padding-bottom:12px; margin-bottom:24px; border-bottom:1px solid var(--line); }
+  .cert{ padding:24px 0 28px; border-top:1px solid var(--line); }
+  .cert:first-of-type{ border-top:none; }
+  .cert-head{ display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+  .cert-head h3{ font-family:var(--serif); font-weight:700; font-size:clamp(20px,2.5vw,26px); }
+  .cert-issuer{ font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); }
+  .cert-blurb{ color:var(--ink-dim); font-size:14.5px; line-height:1.7; max-width:66ch; margin-bottom:12px; }
+  .cert-fit{ color:var(--ink-dim); font-size:14.5px; line-height:1.75; max-width:66ch; margin-bottom:18px; }
+  .cert-fit b{ color:var(--ink); }
+  .cert-map{ background:var(--surface-2); border:1px solid var(--line); border-radius:8px; padding:16px 18px; }
+  .cert-map-title{ font-family:var(--mono); font-size:10.5px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:10px; }
+  .cert-map ul{ list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+  .cert-map li a{ display:flex; align-items:center; justify-content:space-between; gap:12px; color:var(--ink); font-size:14px; padding:9px 12px; border:1px solid var(--line); border-radius:6px; background:var(--void); transition:all .15s ease; }
+  .cert-map li a:hover{ border-color:var(--amber); }
+  .cert-map li a .arrow{ color:var(--amber); font-family:var(--mono); font-size:12px; }
+  #print-brand{ display:none; }
+  @media print{
+    body{ background:#fff; color:#111; padding-top:24px; }
+    .nav, footer, .cta-band, .jump-nav{ display:none !important; }
+    #print-brand{ display:block; position:fixed; bottom:6px; left:0; right:0; text-align:center; font-family:var(--mono); font-size:8.5px; color:#666; }
+    #print-brand b{ color:#111; }
+    .cert{ page-break-inside:avoid; }
+  }
+</style>
+<!-- Microsoft Clarity -->
+<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "yet1lzjxmr");
+</script>
+<style>@media print{body{padding-bottom:30px!important}}</style>
+</head>
+<body>
+
+<div id="print-brand" aria-hidden="true">The DARE Framework &middot; <b>Sarath G</b> &middot; from the book <i>Certified and Clueless</i> &middot; dare.sarathg.me</div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-mark"><span class="dot"></span>DARE</a>
+    <div class="nav-links" id="navLinks">
+      <a href="worksheets.html">Worksheets</a>
+      <a href="use-cases.html">Use cases</a>
+      <a href="certifications.html" class="active">Certifications</a>
+      <a href="https://labs.sarathg.me">Environments</a>
+      <a href="planning-assistant.html">Planning assistant</a>
+      <a href="https://store.pothi.com/book/sarath-g-certified-and-clueless/" class="nav-book" target="_blank" rel="noopener">The book</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">&#9776;</button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div class="page-head">
+    <span class="eyebrow">For certification trainers</span>
+    <h1>DARE for certification programs</h1>
+    <p>Most certification programs are fixed syllabi taught to a clock: CEH, Security+, OSCP, CPENT, SC-200, AWS Security and the rest. They are strong on coverage and, almost without exception, thin on two things, watching the fix actually work and seeing the attack from the other side. That is precisely the gap DARE closes. You do not rewrite the syllabus. You resequence what you already deliver and add the perspective the curriculum left out.</p>
+  </div>
+
+  <div class="fit-note">
+    <p><b>How DARE fits any program.</b> Pick one objective from the certification you teach. Spend a few minutes on <b>Deconstruct</b> so the learner can explain the system before touching it. Run the <b>Attack</b> the exam already expects. Then add the two stages the syllabus skips: <b>Remediate</b>, where the same attack fails against a patched version, and <b>Exchange</b>, where the learner sees their attack from the defender&rsquo;s seat. Same content, same exam objectives, resequenced into understanding. The mappings below are a starting point; the <a href="planning-assistant.html">planning assistant</a> will build any of them to the exact time you have.</p>
+  </div>
+
+  <section class="cert-section" id="cat-foundational">
+    <h2 class="cert-cat">Foundational</h2>
+    <article class="cert" id="secplus">
+      <div class="cert-head"><h3>CompTIA Security+</h3><span class="cert-issuer">CompTIA · SY0-701</span></div>
+      <p class="cert-blurb">The industry's baseline certification. Broad, theory-first, and taught to very large rooms.</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> Security+ is almost all knowledge and almost no doing. DARE is how you turn a domain objective into a fifteen-minute session the room actually remembers, without adding to the syllabus.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=sqli">Attacks, threats & vulnerabilities <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=xss">Attacks, threats & vulnerabilities <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=logtriage">Security operations <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=phishingcampaign">Security program management <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+    <article class="cert" id="ceh">
+      <div class="cert-head"><h3>Certified Ethical Hacker (CEH)</h3><span class="cert-issuer">EC-Council</span></div>
+      <p class="cert-blurb">A broad tour of offensive techniques and tools across many domains.</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> CEH covers enormous breadth but rarely lets a learner see the fix work or the attack from the defender's side. Add Remediate and Exchange to any module and it stops being a tool demo.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=pth">System hacking <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=sqli">Web application hacking <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=mitm">Sniffing <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=wpa2">Wireless <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=s3misconfig">Cloud <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+  </section>
+
+  <section class="cert-section" id="cat-offensive">
+    <h2 class="cert-cat">Offensive</h2>
+    <article class="cert" id="oscp">
+      <div class="cert-head"><h3>OSCP</h3><span class="cert-issuer">OffSec · PEN-200</span></div>
+      <p class="cert-blurb">The hands-on pentest benchmark. Learners already attack; that is the whole exam.</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> OSCP nails the Attack stage and skips the rest. Add a rigorous Deconstruct so learners read a box instead of running everything, and use the report as the Exchange, seeing the engagement from the defender's side.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=sqli">Web attacks <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=kerberoast">Privilege escalation & AD <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=pth">Lateral movement <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=portrecon">Enumeration <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=cmdinjection">Command injection <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+    <article class="cert" id="pentestplus">
+      <div class="cert-head"><h3>CompTIA PenTest+</h3><span class="cert-issuer">CompTIA · PT0-002</span></div>
+      <p class="cert-blurb">A vendor-neutral penetration testing certification, broader and more process-focused than OSCP.</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> PenTest+ spends real time on planning and reporting, which maps cleanly onto Deconstruct and Exchange. Use DARE to connect the tool sections to the report the learner has to write.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=bola">Attacks & exploits <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=sqli">Attacks & exploits <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=kerberoast">Attacks & exploits <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=mitm">Tools & code analysis <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+    <article class="cert" id="cpent">
+      <div class="cert-head"><h3>CPENT / LPT Master</h3><span class="cert-issuer">EC-Council</span></div>
+      <p class="cert-blurb">Advanced penetration testing: pivoting, Active Directory, and multi-layer networks.</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> CPENT is where pivoting and AD finally matter. DARE keeps the advanced material honest by making learners explain each pivot and see it from the blue side before moving on.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=kerberoast">Active Directory <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=pth">Lateral movement <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=imds">Pivoting & SSRF <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=responder">Network attacks <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+    <article class="cert" id="ejpt">
+      <div class="cert-head"><h3>eJPT / eCPPT</h3><span class="cert-issuer">INE Security</span></div>
+      <p class="cert-blurb">Popular entry and intermediate hands-on offensive certifications.</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> Great first hands-on certs. DARE adds the Deconstruct rigor beginners skip and the Exchange perspective that turns a lab pass into real understanding.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=sqli">Web <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=portrecon">Host & network <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=pth">Post-exploitation <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=credstuffing">Auth attacks <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+  </section>
+
+  <section class="cert-section" id="cat-defensive-soc">
+    <h2 class="cert-cat">Defensive & SOC</h2>
+    <article class="cert" id="sc200">
+      <div class="cert-head"><h3>Microsoft SC-200</h3><span class="cert-issuer">Microsoft · Security Operations Analyst</span></div>
+      <p class="cert-blurb">SOC analyst certification centred on Microsoft Sentinel and Defender.</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> SC-200 is strong on detection and native to the Exchange mindset. What it lacks is the Attack: let analysts run the very attack they are learning to detect, then write the rule.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=siemdetect">Mitigate threats with Sentinel <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=threathunt">Threat hunting <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=logtriage">Incident investigation <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=phishinganalysis">Email threats <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+    <article class="cert" id="cysa">
+      <div class="cert-head"><h3>CompTIA CySA+</h3><span class="cert-issuer">CompTIA · CS0-003</span></div>
+      <p class="cert-blurb">Blue-team analyst certification focused on detection and response.</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> CySA+ teaches what to look for. DARE makes it stick by having learners generate the signal first, then detect it, then confirm the rule stays quiet on normal traffic.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=logtriage">Security operations <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=siemdetect">Detection & analysis <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=threathunt">Threat hunting <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+    <article class="cert" id="gcih">
+      <div class="cert-head"><h3>GCIH / Blue Team</h3><span class="cert-issuer">GIAC / Security Blue Team</span></div>
+      <p class="cert-blurb">Incident handling and blue-team certifications (GCIH, BTL1).</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> Incident handlers benefit most from the Exchange inversion: work the case, then sit in the attacker's seat to understand what they were seeing. DARE builds that in by design.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=logtriage">Incident handling <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=staticmalware">Malware triage <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=memforensics">Memory forensics <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=phishinganalysis">Phishing response <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+  </section>
+
+  <section class="cert-section" id="cat-cloud">
+    <h2 class="cert-cat">Cloud</h2>
+    <article class="cert" id="awssec">
+      <div class="cert-head"><h3>AWS Certified Security – Specialty</h3><span class="cert-issuer">Amazon Web Services</span></div>
+      <p class="cert-blurb">The benchmark cloud-security certification for AWS.</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> Cloud exams are heavy on service configuration and light on consequence. DARE gives the learner the breach a misconfiguration actually causes, then the fix, then the audit-log view.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=s3misconfig">Data protection <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=imds">Infra security (SSRF/IMDS) <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=exposedsecrets">Identity & access <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=misconfig">Misconfiguration <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+    <article class="cert" id="az500">
+      <div class="cert-head"><h3>Microsoft AZ-500</h3><span class="cert-issuer">Microsoft · Azure Security Engineer</span></div>
+      <p class="cert-blurb">Azure security engineering certification.</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> Same shape as the AWS exam: strong on settings, weak on consequence. Use DARE to turn an IAM or secrets objective into a session where the learner sees the blast radius and the fix.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=exposedsecrets">Identity & access <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=misconfig">Platform protection <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=tlsmisconfig">Data & applications <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+  </section>
+
+  <section class="cert-section" id="cat-forensics">
+    <h2 class="cert-cat">Forensics</h2>
+    <article class="cert" id="chfi">
+      <div class="cert-head"><h3>CHFI / GCFA</h3><span class="cert-issuer">EC-Council / GIAC</span></div>
+      <p class="cert-blurb">Digital forensics and incident-response investigator certifications.</p>
+      <p class="cert-fit"><b>Where DARE helps.</b> Forensics training is naturally Exchange-heavy, reconstructing what an attacker did. DARE completes it by having the learner run the attack first, so the artefacts they hunt for mean something.</p>
+      <div class="cert-map">
+        <div class="cert-map-title">Turn these objectives into DARE sessions</div>
+        <ul>
+        <li><a href="planning-assistant.html?topic=staticmalware">Malware forensics <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=memforensics">Memory forensics <span class="arrow">&rarr;</span> build a session</a></li>
+        <li><a href="planning-assistant.html?topic=logtriage">Log & timeline analysis <span class="arrow">&rarr;</span> build a session</a></li>
+        </ul>
+      </div>
+    </article>
+  </section>
+
+  <div class="cta-band">
+    <h2>Teaching a program that isn&rsquo;t here?</h2>
+    <p>The four stages fit any syllabus. Tell me the program and I&rsquo;ll help you map it, or read how I run DARE end to end in the book.</p>
+    <div class="cta-row">
+      <a href="https://store.pothi.com/book/sarath-g-certified-and-clueless/" class="btn btn-primary" target="_blank" rel="noopener">Get the book</a>
+      <a href="planning-assistant.html" class="btn btn-ghost">Open the planning assistant</a>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-links">
+      <a href="https://store.pothi.com/book/sarath-g-certified-and-clueless/" target="_blank" rel="noopener">The book</a>
+      <a href="https://labs.sarathg.me">Environments</a>
+      <a href="https://sarathg.medium.com">Medium</a>
+      <a href="https://github.com/secretguard">GitHub</a>
+      <a href="https://www.linkedin.com/in/sarathcybersec">LinkedIn</a>
+    </div>
+    <p class="bottom-note">dare.sarathg.me &nbsp;&middot;&nbsp; a design constraint, not a curriculum</p>
+  </div>
+</footer>
+
+<script>
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', String(isOpen));
+  });
+  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  }));
+</script>
+
+</body>
+</html>
