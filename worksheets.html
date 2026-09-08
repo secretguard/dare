@@ -154,6 +154,8 @@
     a{ color:#111; }
     .sc-item input[type="checkbox"]{ accent-color:#111; }
   }
+  .btn-example{ border:1px solid var(--amber); color:var(--amber); background:transparent; }
+  .btn-example:hover{ background:rgba(242,161,84,.1); }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -189,12 +191,13 @@
   <div class="page-head">
     <span class="eyebrow">Session planning</span>
     <h1>Worksheets</h1>
-    <p>Fill this in while you prep a DARE session on any cybersecurity topic, from a web vulnerability to a network attack, a cloud misconfiguration, or a blue-team detection exercise. It is not tied to one attack class, it is the four questions I ask myself before I run any session. Everything you type stays in this browser: nothing is sent anywhere.</p>
+    <p>Fill this in while you prep a DARE session on any cybersecurity topic, from a web vulnerability to a network attack, a cloud misconfiguration, or a blue-team detection exercise. It is not tied to one attack class, it is the four questions I ask myself before I run any session. Everything you type stays in this browser: nothing is sent anywhere. New to DARE? Hit <b>Load a worked example</b> below to fill every field with a complete SQL-injection session, see how it fits together, then reset and plan your own.</p>
   </div>
 
   <div class="action-bar">
     <div class="save-status"><span class="save-dot"></span><span id="saveStatus">Not saved yet</span></div>
     <div class="action-buttons">
+      <button class="btn btn-example" id="exampleBtn">Load a worked example</button>
       <button class="btn" id="printBtn">Print worksheet</button>
       <button class="btn btn-danger" id="resetBtn">Reset worksheet</button>
     </div>
@@ -427,6 +430,43 @@
 
   // ---------- print ----------
   document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+  // ---------- worked example (a complete SQL-injection DARE session) ----------
+  const EXAMPLE = {
+    chk1:true, chk2:true, chk3:true, chk4:true,
+    d1:"The search box on the homepage of VulnShop, our vulnerable e-commerce app. It drops whatever the shopper types straight into a database query.",
+    d2:"What a database and a SQL query actually are: tables, rows and columns, and how the app builds one query string from its own code plus the shopper's input. Not the whole relational model, just enough to see the input and the query becoming one string.",
+    d3:"Whiteboard. Draw the query as a single sentence with the user's typed text sitting inside it, so everyone can see where the input lands.",
+    d4:"What happens if I type something into this search box that stops behaving like a search term and starts behaving like SQL?",
+    d5:"full",
+    a1:"VulnShop (vulnerable + patched versions running side by side). It has real users, orders and delivery addresses, so exploiting it means reaching real-looking data, not retrieving a flag.",
+    a2:"Type a single quote into the search box and show the error it throws. Then run sqlmap against the search parameter, narrating each step as it confirms the injection, enumerates the database and pulls out user accounts.",
+    a3:"The learner runs the same sqlmap command against the same parameter while I watch and help. The goal here is familiarity with the tool and the output, not independence.",
+    a4:"A different injectable parameter, the account-settings page instead of search, so the exact command does not transfer. They have to look at the new target and reason about it before attacking.",
+    a5a:"What is this parameter doing with your input?",
+    a5b:"Where does this value probably end up once it reaches the server?",
+    a5c:"Demonstrate on the new target, narrating the reasoning, then set a fresh target as an assignment to finish after the session.",
+    a6:"The learner can explain what sqlmap found, why the parameter was vulnerable, and what would have to change in the app for the attack to fail, not just that the exploit worked.",
+    r1:"The query is now parameterised: the search term is passed as data instead of being pasted into the command. Nothing else about the app changes.",
+    r2:"Re-run the exact same sqlmap command against the patched search box. It reports the parameter is not vulnerable and returns nothing, the tool that worked twenty minutes ago now finds nothing.",
+    r3:"Show the boundary the patch created between user input and query structure. Then say it plainly: a pentester is supposed to fail here, and this failure is exactly what the developers were hoping for.",
+    e1:"live",
+    e2:"Open the request logs from the learner's own sqlmap run and ask: what do you notice here, before I explain anything?",
+    e3:"The injected SQL sits in plain text in the logs, a wall of malformed queries no real shopper would ever type. From the defender's side it is one of the loudest things in the file, obvious within seconds.",
+    e4:"full"
+  };
+  document.getElementById('exampleBtn').addEventListener('click', () => {
+    Object.keys(EXAMPLE).forEach(k => {
+      const el = document.getElementById(k);
+      if(!el) return;
+      if(el.type === 'checkbox') el.checked = !!EXAMPLE[k];
+      else el.value = EXAMPLE[k];
+      el.dispatchEvent(new Event('input', { bubbles:true }));
+      el.dispatchEvent(new Event('change', { bubbles:true }));
+    });
+    const first = document.querySelector('.stage-section');
+    if(first) first.scrollIntoView({ behavior:'smooth', block:'start' });
+  });
 
   // ---------- reset with confirmation ----------
   const resetBtn = document.getElementById('resetBtn');

@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planning assistant — DARE Framework</title>
-<meta name="description" content="Pick a cybersecurity topic, a sector, and a time budget. Get a DARE session outline assembled from a growing library of tested blocks across web, network, cloud, AD, wireless, malware and blue-team topics. No AI, just rules.">
+<meta name="description" content="Plan DARE sessions for a whole certification programme (CEH, Security+, OSCP, SC-200, AWS Security and more) or a single topic. Fits any time budget and names the exact lab to use. No AI, just tested blocks.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Planning assistant — DARE Framework">
-<meta property="og:description" content="Pick a cybersecurity topic, a sector, and a time budget. Get a DARE session outline assembled from a growing library of tested blocks across web, network, cloud, AD, wireless, malware and blue-team topics. No AI, just rules.">
+<meta property="og:description" content="Plan DARE sessions for a whole certification programme (CEH, Security+, OSCP, SC-200, AWS Security and more) or a single topic. Fits any time budget and names the exact lab to use. No AI, just tested blocks.">
 <meta property="og:url" content="https://dare.sarathg.me/planning-assistant.html">
 <meta property="og:image" content="https://dare.sarathg.me/og/planning-assistant.png">
 <meta property="og:image:width" content="1200">
@@ -15,7 +15,7 @@
 <meta property="og:image:alt" content="DARE planning assistant | Sarath G">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Planning assistant — DARE Framework">
-<meta name="twitter:description" content="Pick a cybersecurity topic, a sector, and a time budget. Get a DARE session outline assembled from a growing library of tested blocks across web, network, cloud, AD, wireless, malware and blue-team topics. No AI, just rules.">
+<meta name="twitter:description" content="Plan DARE sessions for a whole certification programme (CEH, Security+, OSCP, SC-200, AWS Security and more) or a single topic. Fits any time budget and names the exact lab to use. No AI, just tested blocks.">
 <meta name="twitter:image" content="https://dare.sarathg.me/og/planning-assistant.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -154,6 +154,40 @@
     .outline-stage{ border-top:1px solid #999; page-break-inside:avoid; }
     .os-letter{ color:#111 !important; -webkit-print-color-adjust:exact; }
   }
+
+  /* mode switch + cert planning */
+  .mode-switch{ display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; width:max-content; max-width:100%; margin-bottom:18px; }
+  .mode-btn{ font-family:var(--mono); font-size:12.5px; color:var(--ink-dim); background:var(--surface); border:none; padding:11px 20px; cursor:pointer; transition:all .15s ease; }
+  .mode-btn.active{ background:var(--amber); color:var(--void); }
+  .picker{ display:flex; flex-wrap:wrap; gap:16px; align-items:end; }
+  .picker-field{ flex:1 1 190px; min-width:170px; }
+  .picker > .btn-primary{ flex:0 0 auto; }
+  .scope-row{ display:flex; gap:18px; flex-wrap:wrap; padding:11px 0 2px; }
+  .scope-opt{ display:flex; align-items:center; gap:8px; font-size:14px; color:var(--ink); font-family:var(--sans); cursor:pointer; }
+  .scope-opt input{ accent-color:var(--amber); width:15px; height:15px; }
+  [hidden]{ display:none !important; }
+  .plan-context{ font-family:var(--mono); font-size:12px; color:var(--ink-dim); margin-bottom:18px; }
+  .pc-tag{ background:var(--surface-2); border:1px solid var(--line); border-radius:4px; padding:3px 9px; color:var(--amber); margin-right:9px; }
+  .lab-block{ background:rgba(105,185,138,.08); border:1px solid rgba(105,185,138,.25); border-radius:6px; padding:12px 15px; margin:0 0 26px; font-size:13.5px; color:var(--ink-dim); line-height:1.65; }
+  .lab-block a{ color:var(--green); } .lab-block a:hover{ text-decoration:underline; }
+  .lab-block.lab-none{ background:var(--surface-2); border-color:var(--line); }
+  .lab-tag{ font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:var(--green); margin-right:9px; font-weight:600; }
+  .lab-none .lab-tag{ color:var(--ink-faint); }
+  .prog-head h2{ font-family:var(--serif); font-weight:700; font-size:24px; margin-bottom:6px; }
+  .prog-meta{ font-family:var(--mono); font-size:12px; color:var(--ink-faint); margin-bottom:18px; }
+  .prog-intro{ color:var(--ink-dim); font-size:14px; line-height:1.7; margin-bottom:22px; max-width:68ch; }
+  .prog-warn{ background:rgba(242,161,84,.1); border:1px solid rgba(242,161,84,.3); border-radius:6px; padding:12px 15px; margin-bottom:22px; font-size:13.5px; color:var(--ink-dim); }
+  .prog-mod{ border:1px solid var(--line); border-radius:8px; padding:20px 22px; margin-bottom:16px; background:var(--surface); }
+  .pm-head{ display:flex; gap:14px; align-items:baseline; margin-bottom:12px; }
+  .pm-n{ font-family:var(--mono); font-size:13px; font-weight:700; color:var(--amber); }
+  .pm-head h3{ font-family:var(--serif); font-weight:700; font-size:18px; }
+  .pm-sub{ font-family:var(--mono); font-size:11px; color:var(--ink-faint); margin-top:4px; }
+  .pm-stages{ display:grid; gap:9px; margin:4px 0 14px; }
+  .pm-stages > div{ display:grid; grid-template-columns:20px 1fr; gap:11px; font-size:13.5px; color:var(--ink-dim); line-height:1.6; }
+  .pm-s{ font-family:var(--serif); font-weight:900; font-size:15px; line-height:1.3; }
+  .pm-s.osD{ color:var(--amber); } .pm-s.osA{ color:var(--red); } .pm-s.osR{ color:var(--green); } .pm-s.osE{ color:var(--cyan); }
+  .pm-build{ font-family:var(--mono); font-size:12px; color:var(--amber); }
+  .pm-build:hover{ text-decoration:underline; }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -189,11 +223,36 @@
   <div class="page-head">
     <span class="eyebrow">For trainers building a session</span>
     <h1>Planning assistant</h1>
-    <p>Pick a topic, a sector, and the exact minutes you have, and this assembles a DARE session outline from a growing library of blocks I've written and tested, not a model guessing what a good session looks like. It now spans web and API flaws, network and Active Directory attacks, cloud, wireless, malware, blue-team detection and more, so you can plan a DARE session for almost any cybersecurity topic. It fits the four stages to whatever length you give it, from a 45-minute slot to a full day, because no two training sessions run to the same clock. Where a topic isn't specialised for your sector yet, it says so and gives you the general version rather than inventing one.</p>
+    <p>DARE is my framework, and this is where I hand you how to run it. Choose the <b>certification programme</b> you teach and get a whole-programme DARE plan, or plan a single module. Or switch to <b>a single topic</b> and build one session. Either way you get a Deconstruct&ndash;Attack&ndash;Remediate&ndash;Exchange outline sized to the exact minutes you have, with the specific lab from labs.sarathg.me to run it on. Every block is written and tested, never generated. You are not rewriting your syllabus; you are resequencing what you already deliver so learners actually understand it.</p>
+  </div>
+
+  <div class="mode-switch" role="tablist" aria-label="Planning mode">
+    <button class="mode-btn active" data-mode="cert" role="tab" aria-selected="true">Plan for a certification</button>
+    <button class="mode-btn" data-mode="topic" role="tab" aria-selected="false">Plan a single topic</button>
   </div>
 
   <div class="picker">
-    <div class="picker-field">
+    <!-- CERTIFICATION MODE -->
+    <div class="picker-field pf-cert">
+      <label for="certSelect">Certification programme</label>
+      <select id="certSelect">
+        <option value="">Choose a programme</option>
+      </select>
+    </div>
+    <div class="picker-field pf-cert">
+      <label>What to plan</label>
+      <div class="scope-row">
+        <label class="scope-opt"><input type="radio" name="scope" value="program" checked> Whole programme</label>
+        <label class="scope-opt"><input type="radio" name="scope" value="module"> One module</label>
+      </div>
+    </div>
+    <div class="picker-field pf-cert pf-module" hidden>
+      <label for="moduleSelect">Module / topic</label>
+      <select id="moduleSelect"><option value="">Choose a module</option></select>
+    </div>
+
+    <!-- TOPIC MODE -->
+    <div class="picker-field pf-topic" hidden>
       <label for="topicSelect">Topic</label>
       <select id="topicSelect">
         <option value="">Choose a topic</option>
@@ -223,6 +282,7 @@
         <optgroup label="Network attacks">
           <option value="mitm">ARP spoofing and man-in-the-middle</option>
           <option value="portrecon">Scanning and service enumeration</option>
+          <option value="pivoting">Pivoting &amp; tunneling</option>
         </optgroup>
         <optgroup label="Active Directory & Windows">
           <option value="responder">LLMNR/NBT-NS poisoning</option>
@@ -257,29 +317,25 @@
         </optgroup>
       </select>
     </div>
-    <div class="picker-field">
+    <div class="picker-field pf-topic pf-sector" hidden>
       <label for="sectorSelect">Sector</label>
       <select id="sectorSelect">
-        <option value="">Choose a sector</option>
+        <option value="generic">Generic / e-commerce</option>
         <option value="banking">Banking</option>
         <option value="government">Government</option>
-        <option value="generic">Generic / e-commerce</option>
         <option value="healthcare">Healthcare</option>
         <option value="defence">Defence</option>
       </select>
     </div>
-    <div class="picker-field">
-      <label for="timeInput">Time you have (minutes)</label>
-      <input id="timeInput" type="number" min="45" max="600" step="5" value="120" inputmode="numeric" />
-      <div class="time-presets">
-        <button type="button" data-min="60">60</button>
-        <button type="button" data-min="90">90</button>
-        <button type="button" data-min="120">120</button>
-        <button type="button" data-min="180">180</button>
-        <button type="button" data-min="240">240</button>
-      </div>
+
+    <!-- SHARED TIME -->
+    <div class="picker-field pf-time">
+      <label for="timeInput" id="timeLabel">Total time you have (minutes)</label>
+      <input id="timeInput" type="number" min="45" max="3000" step="5" value="480" inputmode="numeric" />
+      <div class="time-presets" id="timePresets"></div>
     </div>
-    <button class="btn btn-primary" id="buildBtn">Build outline</button>
+
+    <button class="btn btn-primary" id="buildBtn">Build plan</button>
   </div>
 
   <div id="resultArea">
@@ -1219,6 +1275,112 @@
         },
       }
     },
+    pivoting: {
+      label: "Pivoting & tunneling",
+      sectors: {
+        generic: { scene: "a two-network lab where a compromised host is the only route into a hidden subnet", stakes: "for any network, one dual-homed foothold is the door to everything the attacker could not reach directly" },
+      },
+      stages: {
+        deconstruct: {
+          full: "Make sure the learner can explain the pivot problem: a compromised host with a second interface into a subnet you cannot route to. Draw the two networks and the foothold between them. The holding question: if the only path to the hidden network runs through a box you control, how do you borrow its access?",
+          compressed: "Sketch the two networks and the dual-homed host; ask how you reach the far side through it."
+        },
+        attack: {
+          full: "Demonstrate one pivot end to end: a local or dynamic SSH forward, or a socat/chisel relay, through the foothold, then reach a service on the hidden host. The learner repeats with a different technique, then reasons about which one fits the constraint. Success is explaining why the traffic now reaches a network it could not before.",
+          compressed: "One demo of a single forward or SOCKS proxy through the foothold to the hidden host."
+        },
+        remediate: {
+          full: "Against the hardened network, segmentation, egress filtering and no reusable credentials mean the pivot has nowhere to go: the forward is refused or the next host rejects it. Same technique, dead end. A pentester is supposed to fail; the dead end is segmentation working.",
+          compressed: "Re-run the pivot against the segmented network and hit the wall."
+        },
+        exchange: {
+          full: "From the defender's side, a host suddenly relaying traffic to a network it never talks to, or an internal host reaching out through a peer, is a strong signal. Ask what a defender would monitor between segments to catch a pivot in progress.",
+          compressed: "Show the cross-segment traffic a pivot creates and ask what would flag it."
+        }
+      }
+    },
+  };
+
+  // ---------- labs (which real environment on labs.sarathg.me fits each topic) ----------
+  const _LAB = {
+    shopeasy:  { name:'ShopEasy', url:'https://sarathg.me/shopeasy.html', what:'a vulnerable-and-patched e-commerce app (web + API)' },
+    pandora:   { name:'Pandora', url:'https://sarathg.me/pandora.html', what:'a self-hosted VAPT lab (SonarQube, ZAP, Nessus, DVWA, VulnShop)' },
+    wazuh:     { name:'Wazuh SOC lab', url:'https://sarathg.me/wazuh.html', what:'a home SIEM you attack from Kali and detect' },
+    wazeid:    { name:'Wazuh event ID reference', url:'https://sarathg.me/wazuh-event-ids.html', what:'the events each attack leaves behind' },
+    wazlog:    { name:'Wazuh log analysis', url:'https://sarathg.me/wazuh-log-analysis.html', what:'querying the dashboard like an analyst' },
+    splunk:    { name:'Splunk SOC guide', url:'https://sarathg.me/soc_splunk.html', what:'hands-on SPL detection' },
+    pivot:     { name:'Pivoting & tunneling lab', url:'https://sarathg.me/pivoting.html', what:'a free two-network pivot lab' },
+    pivotg:    { name:'Pivoting techniques guide', url:'https://sarathg.me/pivoting-tunneling-port-forwarding.html', what:'one command per technique' },
+    osint:     { name:'OSINT guide', url:'https://sarathg.me/osint.html', what:'the full investigation walkthrough' },
+    osintt:    { name:'OSINT tools 2026', url:'https://sarathg.me/osint-tools.html', what:'60+ tools by job' },
+    parallax:  { name:'Parallax', url:'https://parallax.sarathg.me/', what:'a dual-role attacker/defender breach sim, ideal for the Exchange stage' },
+    blockchain:{ name:'Blockchain lab', url:'https://secretguard.github.io/blockchainlab/', what:'an interactive hashing and tamper explorer' },
+    chameleon: { name:'Chameleon', url:'https://pdf.sarathg.me/', what:'a tabnabbing proof-of-concept for awareness sessions' },
+    freeticket:{ name:'Free Movie Ticket', url:'https://freeticket.sarathg.me/', what:'a phishing/social-engineering demo' },
+    webrecon:  { name:'Web Recon toolkit', url:'https://github.com/secretguard/web-recon', what:'automated recon and asset discovery' }
+  };
+  const LABS = {
+    sqli:['shopeasy','pandora'], ratelimit:['shopeasy'], idor:['shopeasy'], xss:['shopeasy','pandora'], bac:['shopeasy'],
+    csrf:['shopeasy','pandora'], fileupload:['pandora'], cmdinjection:['pandora'], misconfig:['pandora'], ssrf:['pandora'],
+    bola:['shopeasy'], massassign:['shopeasy'], jwtflaws:['shopeasy'], credstuffing:['shopeasy'], passreset:['shopeasy'],
+    portrecon:['webrecon','wazuh'], pivoting:['pivot','pivotg'],
+    siemdetect:['wazuh','splunk','wazeid'], threathunt:['wazuh','splunk'], logtriage:['wazuh','wazlog','parallax'],
+    phishinganalysis:['freeticket','chameleon'], phishingcampaign:['freeticket','chameleon'],
+    weakhash:['blockchain']
+  };
+  function labFor(topic){
+    const ids = LABS[topic];
+    if (ids && ids.length){
+      const items = ids.map(function(id){ const x=_LAB[id]; return '<a href="'+x.url+'" target="_blank" rel="noopener">'+x.name+'</a>'+(x.what?(' \u2014 '+x.what):''); }).join('; ');
+      return '<div class="lab-block"><span class="lab-tag">Lab</span> Run this on '+items+'.</div>';
+    }
+    return '<div class="lab-block lab-none"><span class="lab-tag">Lab</span> No purpose-built lab for this one yet. Closest is <a href="https://sarathg.me/pandora.html" target="_blank" rel="noopener">Pandora</a>, or build a vulnerable-and-patched pair the way Chapter 12 of the book describes. Everything is at <a href="https://labs.sarathg.me" target="_blank" rel="noopener">labs.sarathg.me</a>.</div>';
+  }
+
+  // ---------- certification programmes (modules map to library topics) ----------
+  const CERTS = {
+    secplus:    { name:'CompTIA Security+', issuer:'CompTIA \u00b7 SY0-701', modules:[
+      {label:'Social engineering & phishing', topic:'phishingcampaign'},{label:'Web attacks: injection', topic:'sqli'},
+      {label:'Web attacks: cross-site scripting', topic:'xss'},{label:'Network attacks', topic:'mitm'},
+      {label:'Detection & monitoring', topic:'siemdetect'},{label:'Incident response', topic:'logtriage'}]},
+    ceh:        { name:'Certified Ethical Hacker (CEH)', issuer:'EC-Council', modules:[
+      {label:'Footprinting & reconnaissance', topic:'portrecon'},{label:'System hacking', topic:'pth'},
+      {label:'Web application hacking', topic:'sqli'},{label:'Cross-site scripting', topic:'xss'},
+      {label:'Sniffing', topic:'mitm'},{label:'Wireless hacking', topic:'wpa2'},
+      {label:'Cloud computing', topic:'s3misconfig'},{label:'Social engineering', topic:'phishingcampaign'}]},
+    oscp:       { name:'OSCP', issuer:'OffSec \u00b7 PEN-200', modules:[
+      {label:'Enumeration', topic:'portrecon'},{label:'Web application attacks', topic:'sqli'},
+      {label:'Command injection & RCE', topic:'cmdinjection'},{label:'Active Directory: Kerberoasting', topic:'kerberoast'},
+      {label:'Lateral movement', topic:'pth'},{label:'Pivoting & tunnelling', topic:'pivoting'}]},
+    pentestplus:{ name:'CompTIA PenTest+', issuer:'CompTIA \u00b7 PT0-002', modules:[
+      {label:'Information gathering', topic:'portrecon'},{label:'Web application attacks', topic:'sqli'},
+      {label:'API attacks', topic:'bola'},{label:'Active Directory attacks', topic:'kerberoast'},
+      {label:'Network attacks', topic:'mitm'},{label:'Social engineering', topic:'phishingcampaign'}]},
+    cpent:      { name:'CPENT / LPT Master', issuer:'EC-Council', modules:[
+      {label:'Advanced enumeration', topic:'portrecon'},{label:'Active Directory: Kerberoasting', topic:'kerberoast'},
+      {label:'Lateral movement', topic:'pth'},{label:'Pivoting across networks', topic:'pivoting'},
+      {label:'SSRF to cloud metadata', topic:'imds'},{label:'LLMNR/NBT-NS poisoning', topic:'responder'}]},
+    ejpt:       { name:'eJPT / eCPPT', issuer:'INE Security', modules:[
+      {label:'Web basics', topic:'sqli'},{label:'Host & network', topic:'portrecon'},
+      {label:'Post-exploitation', topic:'pth'},{label:'Authentication attacks', topic:'credstuffing'}]},
+    sc200:      { name:'Microsoft SC-200', issuer:'Microsoft \u00b7 Security Operations Analyst', modules:[
+      {label:'Build a detection', topic:'siemdetect'},{label:'Threat hunting', topic:'threathunt'},
+      {label:'Incident investigation', topic:'logtriage'},{label:'Email threats', topic:'phishinganalysis'}]},
+    cysa:       { name:'CompTIA CySA+', issuer:'CompTIA \u00b7 CS0-003', modules:[
+      {label:'Reconnaissance seen from the SOC', topic:'portrecon'},{label:'Detection & analysis', topic:'siemdetect'},
+      {label:'Alert triage', topic:'logtriage'},{label:'Threat hunting', topic:'threathunt'}]},
+    gcih:       { name:'GCIH / Blue Team L1', issuer:'GIAC / Security Blue Team', modules:[
+      {label:'Incident handling', topic:'logtriage'},{label:'Malware triage', topic:'staticmalware'},
+      {label:'Memory forensics', topic:'memforensics'},{label:'Phishing response', topic:'phishinganalysis'}]},
+    awssec:     { name:'AWS Certified Security \u2013 Specialty', issuer:'Amazon Web Services', modules:[
+      {label:'Data protection (storage)', topic:'s3misconfig'},{label:'Infrastructure (SSRF/IMDS)', topic:'imds'},
+      {label:'Identity & secrets', topic:'exposedsecrets'},{label:'Misconfiguration', topic:'misconfig'}]},
+    az500:      { name:'Microsoft AZ-500', issuer:'Microsoft \u00b7 Azure Security Engineer', modules:[
+      {label:'Identity & secrets', topic:'exposedsecrets'},{label:'Platform protection', topic:'misconfig'},
+      {label:'Data & transport security', topic:'tlsmisconfig'}]},
+    chfi:       { name:'CHFI / GCFA', issuer:'EC-Council / GIAC', modules:[
+      {label:'Malware forensics', topic:'staticmalware'},{label:'Memory forensics', topic:'memforensics'},
+      {label:'Log & timeline analysis', topic:'logtriage'}]}
   };
 
   const SECTOR_LABEL = { banking: 'Banking', government: 'Government', generic: 'Generic / e-commerce', healthcare: 'Healthcare', defence: 'Defence' };
@@ -1250,7 +1412,7 @@
     `;
   }
 
-  function renderOutline(topic, sector, alloc, requestedSector){
+  function renderOutline(topic, sector, alloc, requestedSector, contextHtml){
     const block = LIBRARY[topic];
     const sec = block.sectors[sector];
     const t = alloc;
@@ -1280,6 +1442,7 @@
     const totalMinutes = stageMeta.reduce((sum, s) => sum + s.minutes, 0);
 
     area.innerHTML = `
+      ${contextHtml || ''}
       <div class="outline-head">
         <div class="outline-title">
           <h2>${block.label} &middot; ${SECTOR_LABEL[sector]}</h2>
@@ -1292,6 +1455,7 @@
       </div>
       ${requestedSector ? `<div class="outline-scene" style="border-left:3px solid var(--amber)">Not sector-specialised for <b>${SECTOR_LABEL[requestedSector] || requestedSector}</b> yet, so this is the general version. Every block here is written, not generated. For a ${SECTOR_LABEL[requestedSector] || requestedSector}-specific build, <a href="${BOOKING_LINK}" style="color:var(--amber)">reach out</a>.</div>` : ''}
       <div class="outline-scene">Session runs against <b>${sec.scene}</b>. ${sec.stakes.charAt(0).toUpperCase() + sec.stakes.slice(1)}.</div>
+      ${labFor(topic)}
       ${stagesHtml}
     `;
 
@@ -1320,39 +1484,155 @@
     b.addEventListener('click', () => { document.getElementById('timeInput').value = b.dataset.min; });
   });
 
-  function runBuild(){
-    const topic = document.getElementById('topicSelect').value;
-    const sector = document.getElementById('sectorSelect').value;
-    const mins = parseInt(document.getElementById('timeInput').value, 10);
-    const area = document.getElementById('resultArea');
+  function stageLine(letter, cls, name, txt){
+    return '<div><span class="pm-s '+cls+'">'+letter+'</span><span><b>'+name+'.</b> '+txt+'</span></div>';
+  }
 
-    if(!topic || !sector || !mins || mins < 45){
-      area.innerHTML = '<div class="empty-state">Pick a topic and a sector, set how many minutes you have (45 or more), then build the outline.</div>';
+  function renderModulePlan(certKey, idx, mins){
+    const c = CERTS[certKey]; const mod = c.modules[idx]; const topic = mod.topic;
+    const ctx = '<div class="plan-context"><span class="pc-tag">'+c.name+'</span> Module: <b>'+mod.label+'</b> &middot; run as DARE on '+LIBRARY[topic].label+'</div>';
+    const useSector = (LIBRARY[topic].sectors['generic']) ? 'generic' : Object.keys(LIBRARY[topic].sectors)[0];
+    renderOutline(topic, useSector, computeAllocation(mins), null, ctx);
+  }
+
+  function renderProgramPlan(certKey, total){
+    const c = CERTS[certKey]; const mods = c.modules; const n = mods.length;
+    const area = document.getElementById('resultArea');
+    let per = Math.round(total / n), tight = false;
+    if (per < 45){ per = 45; tight = true; }
+    const variant = per >= 120 ? 'full' : 'compressed';
+    const cards = mods.map(function(mod, i){
+      const topic = mod.topic; const block = LIBRARY[topic];
+      const st = block.stages;
+      const stages = stageLine('D','osD','Deconstruct', st.deconstruct[variant])
+                   + stageLine('A','osA','Attack', st.attack[variant])
+                   + stageLine('R','osR','Remediate', st.remediate[variant])
+                   + stageLine('E','osE','Exchange', st.exchange[variant]);
+      return '<div class="prog-mod">'
+           + '<div class="pm-head"><span class="pm-n">'+String(i+1).padStart(2,'0')+'</span>'
+           + '<div><h3>'+mod.label+'</h3><div class="pm-sub">DARE on '+block.label+' &middot; '+per+' min</div></div></div>'
+           + labFor(topic)
+           + '<div class="pm-stages">'+stages+'</div>'
+           + '<a class="pm-build" href="planning-assistant.html?topic='+topic+'&mins='+per+'">Open the full session outline &rarr;</a>'
+           + '</div>';
+    }).join('');
+    const totalUsed = per * n;
+    const warn = tight
+      ? '<div class="prog-warn">You have set '+total+' minutes for '+n+' modules. That is tight: each is pinned to a 45-minute minimum, so the full programme needs about '+totalUsed+' minutes ('+(totalUsed/60).toFixed(1)+' h). Run it across more than one sitting, or raise the time.</div>'
+      : '';
+    area.innerHTML =
+        '<div class="prog-head"><h2>'+c.name+' &middot; whole-programme DARE plan</h2></div>'
+      + '<div class="prog-meta">'+n+' sessions &middot; about '+per+' min each &middot; '+Math.round(totalUsed/60*10)/10+' h total</div>'
+      + '<p class="prog-intro">Teach the programme in this order, running each module as a full DARE loop rather than a lecture. The four lines under each are the compressed shape of the session; open any one for the full stage-by-stage outline, sized to the minutes you set. You are not adding to the syllabus, you are resequencing what you already deliver so understanding forms.</p>'
+      + warn
+      + '<div class="outline-actions" style="margin-bottom:20px"><button class="btn btn-ghost" id="printProgBtn">Print</button></div>'
+      + cards;
+    const pb = document.getElementById('printProgBtn'); if (pb) pb.addEventListener('click', function(){ window.print(); });
+  }
+
+  function runBuild(){
+    const area = document.getElementById('resultArea');
+    const mins = parseInt(document.getElementById('timeInput').value, 10);
+    if(!mins || mins < 45){
+      area.innerHTML = '<div class="empty-state">Set how many minutes you have (45 or more), then build the plan.</div>';
       return;
     }
-
-    const block = LIBRARY[topic];
-    if(!block){ renderFallback(topic, sector); return; }
-
-    let useSector = sector, requested = null;
-    if(!block.sectors[sector]){
-      if(block.sectors.generic){ useSector = 'generic'; requested = sector; }
-      else { renderFallback(topic, sector); return; }
+    if(currentMode === 'topic'){
+      const topic = document.getElementById('topicSelect').value;
+      const sector = document.getElementById('sectorSelect').value || 'generic';
+      if(!topic){ area.innerHTML = '<div class="empty-state">Pick a topic, then build the outline.</div>'; return; }
+      const block = LIBRARY[topic];
+      if(!block){ renderFallback(topic, sector); return; }
+      let useSector = sector, requested = null;
+      if(!block.sectors[sector]){
+        if(block.sectors.generic){ useSector = 'generic'; requested = sector; }
+        else { renderFallback(topic, sector); return; }
+      }
+      renderOutline(topic, useSector, computeAllocation(mins), requested, '');
+      return;
     }
-
-    renderOutline(topic, useSector, computeAllocation(mins), requested);
+    // certification mode
+    const cert = document.getElementById('certSelect').value;
+    if(!cert || !CERTS[cert]){ area.innerHTML = '<div class="empty-state">Choose a certification programme, then build the plan.</div>'; return; }
+    const scope = (document.querySelector('input[name="scope"]:checked') || {}).value || 'program';
+    if(scope === 'module'){
+      const idx = document.getElementById('moduleSelect').value;
+      if(idx === '' || idx === null){ area.innerHTML = '<div class="empty-state">Choose which module of ' + CERTS[cert].name + ' you are teaching.</div>'; return; }
+      renderModulePlan(cert, parseInt(idx, 10), mins);
+    } else {
+      renderProgramPlan(cert, mins);
+    }
   }
 
   document.getElementById('buildBtn').addEventListener('click', runBuild);
 
-  // prefill from URL (?topic=&sector=&mins=) so other pages can deep-link a session
+  // ---------- mode + populate ----------
+  let currentMode = 'cert';
+  const certSelect = document.getElementById('certSelect');
+  const moduleSelect = document.getElementById('moduleSelect');
+  const timeLabel = document.getElementById('timeLabel');
+  const timePresets = document.getElementById('timePresets');
+
+  Object.keys(CERTS).forEach(function(k){
+    const o = document.createElement('option'); o.value = k; o.textContent = CERTS[k].name; certSelect.appendChild(o);
+  });
+
+  function setPresets(list){
+    timePresets.innerHTML = list.map(function(m){ return '<button type="button" data-min="'+m+'">'+m+'</button>'; }).join('');
+    timePresets.querySelectorAll('button').forEach(function(b){ b.addEventListener('click', function(){ document.getElementById('timeInput').value = b.dataset.min; }); });
+  }
+  function scopeVal(){ const r = document.querySelector('input[name="scope"]:checked'); return r ? r.value : 'program'; }
+  function refreshTimeUI(){
+    if(currentMode === 'cert' && scopeVal() === 'program'){
+      timeLabel.textContent = 'Total time across the programme (minutes)';
+      setPresets([240,480,960,1440,2400]);
+      if(parseInt(document.getElementById('timeInput').value,10) < 240) document.getElementById('timeInput').value = 480;
+    } else {
+      timeLabel.textContent = 'Time you have (minutes)';
+      setPresets([60,90,120,180,240]);
+      if(parseInt(document.getElementById('timeInput').value,10) > 600) document.getElementById('timeInput').value = 120;
+    }
+  }
+  function fillModules(certKey){
+    moduleSelect.innerHTML = '<option value="">Choose a module</option>';
+    if(!CERTS[certKey]) return;
+    CERTS[certKey].modules.forEach(function(mod, i){
+      const o = document.createElement('option'); o.value = i; o.textContent = mod.label + '  (' + LIBRARY[mod.topic].label + ')'; moduleSelect.appendChild(o);
+    });
+  }
+  function applyScope(){ document.querySelectorAll('.pf-module').forEach(function(el){ el.hidden = scopeVal() !== 'module'; }); refreshTimeUI(); }
+  function setMode(mode){
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(function(b){ const on = b.dataset.mode === mode; b.classList.toggle('active', on); b.setAttribute('aria-selected', String(on)); });
+    document.querySelectorAll('.pf-cert').forEach(function(el){ el.hidden = mode !== 'cert'; });
+    document.querySelectorAll('.pf-topic').forEach(function(el){ el.hidden = mode !== 'topic'; });
+    if(mode === 'cert') applyScope(); else refreshTimeUI();
+  }
+  document.querySelectorAll('.mode-btn').forEach(function(b){ b.addEventListener('click', function(){ setMode(b.dataset.mode); }); });
+  document.querySelectorAll('input[name="scope"]').forEach(function(r){ r.addEventListener('change', applyScope); });
+  certSelect.addEventListener('change', function(){ fillModules(certSelect.value); });
+
+  // ---------- URL prefill ----------
   (function(){
     const q = new URLSearchParams(location.search);
-    const topic = q.get('topic'), sector = q.get('sector'), mins = q.get('mins');
-    if(topic && LIBRARY[topic]) document.getElementById('topicSelect').value = topic;
-    if(sector) document.getElementById('sectorSelect').value = sector;
+    const topic = q.get('topic'), sector = q.get('sector'), mins = q.get('mins'), cert = q.get('cert'), scope = q.get('scope'), moduleIdx = q.get('module');
     if(mins && !isNaN(parseInt(mins,10))) document.getElementById('timeInput').value = parseInt(mins,10);
-    if(topic && LIBRARY[topic] && sector) runBuild();
+    if(topic && LIBRARY[topic]){
+      setMode('topic');
+      document.getElementById('topicSelect').value = topic;
+      if(sector) document.getElementById('sectorSelect').value = sector;
+      runBuild();
+      return;
+    }
+    if(cert && CERTS[cert]){
+      setMode('cert');
+      certSelect.value = cert; fillModules(cert);
+      if(scope === 'module'){ document.querySelector('input[name="scope"][value="module"]').checked = true; if(moduleIdx !== null) moduleSelect.value = moduleIdx; }
+      applyScope();
+      runBuild();
+      return;
+    }
+    setMode('cert');
   })();
 </script>
 

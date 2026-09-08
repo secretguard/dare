@@ -141,6 +141,8 @@
   .cert-map li a{ display:flex; align-items:center; justify-content:space-between; gap:12px; color:var(--ink); font-size:14px; padding:9px 12px; border:1px solid var(--line); border-radius:6px; background:var(--void); transition:all .15s ease; }
   .cert-map li a:hover{ border-color:var(--amber); }
   .cert-map li a .arrow{ color:var(--amber); font-family:var(--mono); font-size:12px; }
+  .cert-plan{ display:inline-block; margin-top:16px; font-family:var(--mono); font-size:12.5px; color:var(--amber); }
+  .cert-plan:hover{ text-decoration:underline; }
   #print-brand{ display:none; }
   @media print{
     body{ background:#fff; color:#111; padding-top:24px; }
@@ -205,6 +207,7 @@
         <li><a href="planning-assistant.html?topic=phishingcampaign">Security program management <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=secplus&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
     <article class="cert" id="ceh">
       <div class="cert-head"><h3>Certified Ethical Hacker (CEH)</h3><span class="cert-issuer">EC-Council</span></div>
@@ -220,6 +223,7 @@
         <li><a href="planning-assistant.html?topic=s3misconfig">Cloud <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=ceh&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
   </section>
 
@@ -239,6 +243,7 @@
         <li><a href="planning-assistant.html?topic=cmdinjection">Command injection <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=oscp&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
     <article class="cert" id="pentestplus">
       <div class="cert-head"><h3>CompTIA PenTest+</h3><span class="cert-issuer">CompTIA · PT0-002</span></div>
@@ -253,6 +258,7 @@
         <li><a href="planning-assistant.html?topic=mitm">Tools & code analysis <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=pentestplus&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
     <article class="cert" id="cpent">
       <div class="cert-head"><h3>CPENT / LPT Master</h3><span class="cert-issuer">EC-Council</span></div>
@@ -267,6 +273,7 @@
         <li><a href="planning-assistant.html?topic=responder">Network attacks <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=cpent&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
     <article class="cert" id="ejpt">
       <div class="cert-head"><h3>eJPT / eCPPT</h3><span class="cert-issuer">INE Security</span></div>
@@ -281,6 +288,7 @@
         <li><a href="planning-assistant.html?topic=credstuffing">Auth attacks <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=ejpt&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
   </section>
 
@@ -299,6 +307,7 @@
         <li><a href="planning-assistant.html?topic=phishinganalysis">Email threats <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=sc200&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
     <article class="cert" id="cysa">
       <div class="cert-head"><h3>CompTIA CySA+</h3><span class="cert-issuer">CompTIA · CS0-003</span></div>
@@ -312,6 +321,7 @@
         <li><a href="planning-assistant.html?topic=threathunt">Threat hunting <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=cysa&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
     <article class="cert" id="gcih">
       <div class="cert-head"><h3>GCIH / Blue Team</h3><span class="cert-issuer">GIAC / Security Blue Team</span></div>
@@ -326,6 +336,7 @@
         <li><a href="planning-assistant.html?topic=phishinganalysis">Phishing response <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=gcih&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
   </section>
 
@@ -344,6 +355,7 @@
         <li><a href="planning-assistant.html?topic=misconfig">Misconfiguration <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=awssec&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
     <article class="cert" id="az500">
       <div class="cert-head"><h3>Microsoft AZ-500</h3><span class="cert-issuer">Microsoft · Azure Security Engineer</span></div>
@@ -357,6 +369,7 @@
         <li><a href="planning-assistant.html?topic=tlsmisconfig">Data & applications <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=az500&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
   </section>
 
@@ -374,6 +387,7 @@
         <li><a href="planning-assistant.html?topic=logtriage">Log & timeline analysis <span class="arrow">&rarr;</span> build a session</a></li>
         </ul>
       </div>
+      <a class="cert-plan" href="planning-assistant.html?cert=chfi&amp;scope=program">Build the whole-programme DARE plan &rarr;</a>
     </article>
   </section>
 
