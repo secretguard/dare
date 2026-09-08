@@ -188,6 +188,11 @@
   .pm-s.osD{ color:var(--amber); } .pm-s.osA{ color:var(--red); } .pm-s.osR{ color:var(--green); } .pm-s.osE{ color:var(--cyan); }
   .pm-build{ font-family:var(--mono); font-size:12px; color:var(--amber); }
   .pm-build:hover{ text-decoration:underline; }
+  .prog-conv{ background:var(--surface-2); border-style:dashed; }
+  .prog-conv .pm-sub{ color:var(--ink-faint); }
+  .pm-note{ color:var(--ink-dim); font-size:13.5px; line-height:1.6; margin:2px 0 0; }
+  .lab-ext{ background:rgba(79,216,224,.06); border-color:rgba(79,216,224,.22); }
+  .lab-ext .lab-tag{ color:var(--cyan); }
 </style>
 <!-- Microsoft Clarity -->
 <script type="text/javascript">
@@ -1328,59 +1333,50 @@
     phishinganalysis:['freeticket','chameleon'], phishingcampaign:['freeticket','chameleon'],
     weakhash:['blockchain']
   };
+  const EXT = {
+    mitm: { plat:[{name:"TryHackMe",url:"https://tryhackme.com",note:"search \"MITM\" / network rooms"}], build:"a host-only VM network with a client, a gateway and Kali, then ARP-spoof with bettercap and capture a plaintext credential." },
+    responder: { plat:[{name:"TryHackMe",url:"https://tryhackme.com",note:"room: Breaching Active Directory"}], build:"a small Windows network with LLMNR/NBT-NS enabled; capture a NetNTLM hash with Responder and crack it offline." },
+    kerberoast: { plat:[{name:"TryHackMe",url:"https://tryhackme.com",note:"room: Attacking Kerberos"}, {name:"HTB Academy",url:"https://academy.hackthebox.com",note:"module: Active Directory Enumeration & Attacks"}], build:"a one-DC Active Directory lab with a service account (SPN set) whose password is weak; request its ticket and crack it offline." },
+    pth: { plat:[{name:"TryHackMe",url:"https://tryhackme.com",note:"room: Lateral Movement and Pivoting"}, {name:"HTB Academy",url:"https://academy.hackthebox.com",note:"module: Password Attacks / Lateral Movement"}], build:"two Windows hosts sharing one local-admin password; harvest the hash on one and reuse it to run commands on the other." },
+    imds: { plat:[{name:"CloudGoat",url:"https://github.com/RhinoSecurityLabs/cloudgoat",note:"deliberately vulnerable AWS scenarios"}, {name:"flAWS",url:"http://flaws.cloud",note:"guided AWS SSRF/metadata challenges"}], build:"a cloud instance running an app with an SSRF sink (a URL fetcher); reach the metadata endpoint and pull the role credentials, then compare IMDSv1 vs IMDSv2." },
+    s3misconfig: { plat:[{name:"CloudGoat",url:"https://github.com/RhinoSecurityLabs/cloudgoat",note:"vulnerable AWS scenarios"}, {name:"flAWS",url:"http://flaws.cloud",note:"open-bucket challenges"}], build:"a cloud storage bucket set world-readable with sample files, next to a correctly-locked one; enumerate and read the open bucket, then fix the policy." },
+    exposedsecrets: { plat:[{name:"TryHackMe",url:"https://tryhackme.com",note:"secrets / DevSecOps rooms"}], build:"a git repo (and a container image) seeded with a live-looking API key; find it with trufflehog or gitleaks, confirm what it unlocks, then rotate it." },
+    wpa2: { plat:[{name:"TryHackMe",url:"https://tryhackme.com",note:"room: Wifi Hacking 101"}], build:"a spare access point plus a monitor-mode adapter in a space you control; capture a WPA2 handshake (deauth to force a rejoin) and crack a weak passphrase offline." },
+    eviltwin: { plat:[{name:"TryHackMe",url:"https://tryhackme.com",note:"wireless rooms"}], build:"a Wi-Fi adapter running hostapd or airgeddon in an isolated, consented space; stand up a look-alike SSID with a captive portal and capture a test credential." },
+    staticmalware: { plat:[{name:"TryHackMe",url:"https://tryhackme.com",note:"rooms: Intro to Malware Analysis / MalDoc"}, {name:"MalwareBazaar",url:"https://bazaar.abuse.ch",note:"real samples for research"}], build:"an isolated analysis VM (no network) with a couple of safe samples; triage by hashes, strings and imports to a verdict, then write one detection." },
+    memforensics: { plat:[{name:"TryHackMe",url:"https://tryhackme.com",note:"rooms: Volatility / Memory Forensics"}], build:"a memory image from a compromised VM (or a public Volatility sample); walk the process tree and network connections to a finding, then turn it into a host indicator." },
+    tlsmisconfig: { plat:[{name:"testssl.sh",url:"https://testssl.sh",note:"free CLI scanner"}, {name:"SSL Labs",url:"https://www.ssllabs.com/ssltest/",note:"online TLS grader"}], build:"a web server deliberately configured with an old protocol and weak ciphers, next to a hardened one; scan both and compare finding by finding." },
+    deserialization: { plat:[{name:"PortSwigger Web Security Academy",url:"https://portswigger.net/web-security/deserialization",note:"free hands-on labs"}], build:"an app that deserializes a user-supplied object without validation, plus a patched build that uses an allow-list or safe format." },
+    xxe: { plat:[{name:"PortSwigger Web Security Academy",url:"https://portswigger.net/web-security/xxe",note:"free hands-on labs"}], build:"an endpoint that parses user XML with external entities enabled, next to a build that disables them." },
+  };
   function labFor(topic){
     const ids = LABS[topic];
     if (ids && ids.length){
       const items = ids.map(function(id){ const x=_LAB[id]; return '<a href="'+x.url+'" target="_blank" rel="noopener">'+x.name+'</a>'+(x.what?(' \u2014 '+x.what):''); }).join('; ');
       return '<div class="lab-block"><span class="lab-tag">Lab</span> Run this on '+items+'.</div>';
     }
-    return '<div class="lab-block lab-none"><span class="lab-tag">Lab</span> No purpose-built lab for this one yet. Closest is <a href="https://sarathg.me/pandora.html" target="_blank" rel="noopener">Pandora</a>, or build a vulnerable-and-patched pair the way Chapter 12 of the book describes. Everything is at <a href="https://labs.sarathg.me" target="_blank" rel="noopener">labs.sarathg.me</a>.</div>';
+    const e = EXT[topic];
+    if (e){
+      const plats = e.plat.map(function(x){ return '<a href="'+x.url+'" target="_blank" rel="noopener">'+x.name+'</a>'+(x.note?(' ('+x.note+')'):''); }).join(', ');
+      return '<div class="lab-block lab-ext"><span class="lab-tag">Lab</span> No lab for this on labs.sarathg.me yet. Try '+plats+'. Or build your own: '+e.build+' Chapter 12 of the book walks through building a vulnerable-and-patched pair, and if you do, it belongs on labs.sarathg.me.</div>';
+    }
+    return '<div class="lab-block lab-ext"><span class="lab-tag">Lab</span> No lab for this yet. Try <a href="https://tryhackme.com" target="_blank" rel="noopener">TryHackMe</a>, <a href="https://www.hackthebox.com" target="_blank" rel="noopener">Hack The Box</a>, or <a href="https://portswigger.net/web-security" target="_blank" rel="noopener">PortSwigger Web Security Academy</a> for web topics. Or build a vulnerable-and-patched pair (Chapter 12 of the book shows how) and it belongs on <a href="https://labs.sarathg.me" target="_blank" rel="noopener">labs.sarathg.me</a>.</div>';
   }
 
   // ---------- certification programmes (modules map to library topics) ----------
   const CERTS = {
-    secplus:    { name:'CompTIA Security+', issuer:'CompTIA \u00b7 SY0-701', modules:[
-      {label:'Social engineering & phishing', topic:'phishingcampaign'},{label:'Web attacks: injection', topic:'sqli'},
-      {label:'Web attacks: cross-site scripting', topic:'xss'},{label:'Network attacks', topic:'mitm'},
-      {label:'Detection & monitoring', topic:'siemdetect'},{label:'Incident response', topic:'logtriage'}]},
-    ceh:        { name:'Certified Ethical Hacker (CEH)', issuer:'EC-Council', modules:[
-      {label:'Footprinting & reconnaissance', topic:'portrecon'},{label:'System hacking', topic:'pth'},
-      {label:'Web application hacking', topic:'sqli'},{label:'Cross-site scripting', topic:'xss'},
-      {label:'Sniffing', topic:'mitm'},{label:'Wireless hacking', topic:'wpa2'},
-      {label:'Cloud computing', topic:'s3misconfig'},{label:'Social engineering', topic:'phishingcampaign'}]},
-    oscp:       { name:'OSCP', issuer:'OffSec \u00b7 PEN-200', modules:[
-      {label:'Enumeration', topic:'portrecon'},{label:'Web application attacks', topic:'sqli'},
-      {label:'Command injection & RCE', topic:'cmdinjection'},{label:'Active Directory: Kerberoasting', topic:'kerberoast'},
-      {label:'Lateral movement', topic:'pth'},{label:'Pivoting & tunnelling', topic:'pivoting'}]},
-    pentestplus:{ name:'CompTIA PenTest+', issuer:'CompTIA \u00b7 PT0-002', modules:[
-      {label:'Information gathering', topic:'portrecon'},{label:'Web application attacks', topic:'sqli'},
-      {label:'API attacks', topic:'bola'},{label:'Active Directory attacks', topic:'kerberoast'},
-      {label:'Network attacks', topic:'mitm'},{label:'Social engineering', topic:'phishingcampaign'}]},
-    cpent:      { name:'CPENT / LPT Master', issuer:'EC-Council', modules:[
-      {label:'Advanced enumeration', topic:'portrecon'},{label:'Active Directory: Kerberoasting', topic:'kerberoast'},
-      {label:'Lateral movement', topic:'pth'},{label:'Pivoting across networks', topic:'pivoting'},
-      {label:'SSRF to cloud metadata', topic:'imds'},{label:'LLMNR/NBT-NS poisoning', topic:'responder'}]},
-    ejpt:       { name:'eJPT / eCPPT', issuer:'INE Security', modules:[
-      {label:'Web basics', topic:'sqli'},{label:'Host & network', topic:'portrecon'},
-      {label:'Post-exploitation', topic:'pth'},{label:'Authentication attacks', topic:'credstuffing'}]},
-    sc200:      { name:'Microsoft SC-200', issuer:'Microsoft \u00b7 Security Operations Analyst', modules:[
-      {label:'Build a detection', topic:'siemdetect'},{label:'Threat hunting', topic:'threathunt'},
-      {label:'Incident investigation', topic:'logtriage'},{label:'Email threats', topic:'phishinganalysis'}]},
-    cysa:       { name:'CompTIA CySA+', issuer:'CompTIA \u00b7 CS0-003', modules:[
-      {label:'Reconnaissance seen from the SOC', topic:'portrecon'},{label:'Detection & analysis', topic:'siemdetect'},
-      {label:'Alert triage', topic:'logtriage'},{label:'Threat hunting', topic:'threathunt'}]},
-    gcih:       { name:'GCIH / Blue Team L1', issuer:'GIAC / Security Blue Team', modules:[
-      {label:'Incident handling', topic:'logtriage'},{label:'Malware triage', topic:'staticmalware'},
-      {label:'Memory forensics', topic:'memforensics'},{label:'Phishing response', topic:'phishinganalysis'}]},
-    awssec:     { name:'AWS Certified Security \u2013 Specialty', issuer:'Amazon Web Services', modules:[
-      {label:'Data protection (storage)', topic:'s3misconfig'},{label:'Infrastructure (SSRF/IMDS)', topic:'imds'},
-      {label:'Identity & secrets', topic:'exposedsecrets'},{label:'Misconfiguration', topic:'misconfig'}]},
-    az500:      { name:'Microsoft AZ-500', issuer:'Microsoft \u00b7 Azure Security Engineer', modules:[
-      {label:'Identity & secrets', topic:'exposedsecrets'},{label:'Platform protection', topic:'misconfig'},
-      {label:'Data & transport security', topic:'tlsmisconfig'}]},
-    chfi:       { name:'CHFI / GCFA', issuer:'EC-Council / GIAC', modules:[
-      {label:'Malware forensics', topic:'staticmalware'},{label:'Memory forensics', topic:'memforensics'},
-      {label:'Log & timeline analysis', topic:'logtriage'}]}
+    secplus: { name:"CompTIA Security+", issuer:"CompTIA · SY0-701 (5 domains)", modules:[{label:"General Security Concepts",note:"Foundational concepts and control types. Deliver conventionally; DARE starts once there is a real system to attack."},{label:"Threats, Vulnerabilities & Mitigations",topic:"sqli"},{label:"Security Architecture",topic:"misconfig"},{label:"Security Operations",topic:"siemdetect"},{label:"Security Program Management & Oversight",note:"Governance, risk and policy. Conventional delivery, not a DARE session."}] },
+    ceh: { name:"Certified Ethical Hacker", issuer:"EC-Council · CEH v13 (20 modules)", modules:[{label:"01 · Introduction to Ethical Hacking",note:"Concepts, methodology and law. Conventional delivery."},{label:"02 · Footprinting and Reconnaissance",topic:"portrecon"},{label:"03 · Scanning Networks",topic:"portrecon"},{label:"04 · Enumeration",topic:"portrecon"},{label:"05 · Vulnerability Analysis",note:"Scanning and triage. Fold into the recon session or deliver conventionally."},{label:"06 · System Hacking",topic:"pth"},{label:"07 · Malware Threats",topic:"staticmalware"},{label:"08 · Sniffing",topic:"mitm"},{label:"09 · Social Engineering",topic:"phishingcampaign"},{label:"10 · Denial-of-Service",topic:"ratelimit"},{label:"11 · Session Hijacking",topic:"jwtflaws"},{label:"12 · Evading IDS, Firewalls & Honeypots",note:"Evasion. Teach from the blue side: run the detection session, then show how an attacker slips under it."},{label:"13 · Hacking Web Servers",topic:"misconfig"},{label:"14 · Hacking Web Applications",topic:"xss"},{label:"15 · SQL Injection",topic:"sqli"},{label:"16 · Hacking Wireless Networks",topic:"wpa2"},{label:"17 · Hacking Mobile Platforms",note:"Mobile. No local lab yet; plan it as a topic to get external lab options and a build spec."},{label:"18 · IoT and OT Hacking",note:"IoT/OT. Emerging; no local lab yet."},{label:"19 · Cloud Computing",topic:"s3misconfig"},{label:"20 · Cryptography",topic:"weakhash"}] },
+    oscp: { name:"OSCP", issuer:"OffSec · PEN-200 (modules)", modules:[{label:"Passive & Active Information Gathering",topic:"portrecon"},{label:"Vulnerability Scanning",note:"Scanning and analysis. Fold into the recon session or deliver conventionally."},{label:"Common Web Application Attacks",topic:"xss"},{label:"SQL Injection Attacks",topic:"sqli"},{label:"Password Attacks",topic:"credstuffing"},{label:"Windows & Linux Privilege Escalation",topic:"pth"},{label:"Port Redirection & SSH Tunneling",topic:"pivoting"},{label:"Active Directory: Enumeration & Authentication Attacks",topic:"kerberoast"},{label:"Lateral Movement in Active Directory",topic:"pth"},{label:"Report Writing",note:"The report IS the Exchange, findings written for the defender. Run it as the Exchange stage of your sessions, not a separate lecture."}] },
+    pentestplus: { name:"CompTIA PenTest+", issuer:"CompTIA · PT0-003 (5 domains)", modules:[{label:"Engagement Management",note:"Scoping, governance and communication. Conventional delivery."},{label:"Reconnaissance and Enumeration",topic:"portrecon"},{label:"Vulnerability Discovery and Analysis",note:"Scanning and analysis. Fold into the recon session or deliver conventionally."},{label:"Attacks and Exploits",topic:"sqli"},{label:"Post-exploitation and Lateral Movement",topic:"pth"}] },
+    cpent: { name:"CPENT / LPT Master", issuer:"EC-Council · CPENT (modules)", modules:[{label:"Scoping & Engagement",note:"Rules of engagement and scoping. Conventional delivery."},{label:"Open Source Intelligence (OSINT)",topic:"portrecon"},{label:"Social Engineering Penetration Testing",topic:"phishingcampaign"},{label:"Network Penetration Testing (External & Internal)",topic:"portrecon"},{label:"Web Application Penetration Testing",topic:"sqli"},{label:"API & JWT Penetration Testing",topic:"bola"},{label:"Perimeter Defense Evasion",note:"Firewall/IDS evasion. Teach from the blue side: detection session first, then evade it."},{label:"Windows Exploitation & Privilege Escalation",topic:"pth"},{label:"Active Directory Penetration Testing",topic:"kerberoast"},{label:"Lateral Movement & Pivoting",topic:"pivoting"},{label:"Wireless Penetration Testing",topic:"wpa2"},{label:"IoT Penetration Testing",note:"IoT. Emerging; no local lab yet."},{label:"Binary Analysis & Exploitation",note:"Reverse engineering and binary exploitation. No local lab; plan as a topic for external options."},{label:"Report Writing & Post-Testing",note:"The report is the Exchange perspective. Deliver as the Exchange stage."}] },
+    ejpt: { name:"eJPTv2", issuer:"INE Security (4 domains)", modules:[{label:"Assessment Methodologies",topic:"portrecon"},{label:"Host & Network Auditing",note:"Auditing hosts and services. Fold into the recon/enumeration session or deliver conventionally."},{label:"Host & Network Penetration Testing",topic:"pth"},{label:"Web Application Penetration Testing",topic:"sqli"}] },
+    sc200: { name:"Microsoft SC-200", issuer:"Microsoft · Security Operations Analyst (3 domains)", modules:[{label:"Mitigate threats using Microsoft Defender XDR",topic:"phishinganalysis"},{label:"Mitigate threats using Microsoft Defender for Cloud",topic:"logtriage"},{label:"Mitigate threats using Microsoft Sentinel",topic:"siemdetect"}] },
+    cysa: { name:"CompTIA CySA+", issuer:"CompTIA · CS0-003 (4 domains)", modules:[{label:"Security Operations",topic:"siemdetect"},{label:"Vulnerability Management",topic:"portrecon"},{label:"Incident Response and Management",topic:"logtriage"},{label:"Reporting and Communication",note:"Reporting and metrics. Conventional delivery."}] },
+    gcih: { name:"GCIH", issuer:"GIAC · SANS SEC504", modules:[{label:"Incident Handling Process (PICERL)",topic:"logtriage"},{label:"Reconnaissance, Scanning & Enumeration Attacks",topic:"portrecon"},{label:"Password & Access Attacks",topic:"credstuffing"},{label:"Web Application Attacks",topic:"sqli"},{label:"Post-Exploitation & Lateral Movement",topic:"pth"},{label:"Malware & Memory Analysis",topic:"memforensics"}] },
+    awssec: { name:"AWS Certified Security – Specialty", issuer:"AWS · SCS-C02 (6 domains)", modules:[{label:"Threat Detection & Incident Response",topic:"logtriage"},{label:"Security Logging & Monitoring",topic:"siemdetect"},{label:"Infrastructure Security (SSRF/IMDS)",topic:"imds"},{label:"Identity & Access Management",topic:"exposedsecrets"},{label:"Data Protection",topic:"s3misconfig"},{label:"Management & Security Governance",note:"Account structure and governance. Conventional delivery."}] },
+    az500: { name:"Microsoft AZ-500", issuer:"Microsoft · Azure Security Engineer (4 domains)", modules:[{label:"Manage Identity and Access",topic:"exposedsecrets"},{label:"Secure Networking",topic:"tlsmisconfig"},{label:"Secure Compute, Storage & Databases",topic:"s3misconfig"},{label:"Manage Security Operations",topic:"siemdetect"}] },
+    chfi: { name:"CHFI", issuer:"EC-Council · CHFI v11 (modules)", modules:[{label:"Forensic Investigation Process",note:"Methodology and chain of custody. Conventional delivery."},{label:"Windows / Linux / Mac Forensics",topic:"memforensics"},{label:"Network Forensics",topic:"logtriage"},{label:"Malware Forensics",topic:"staticmalware"},{label:"Investigating Web Attacks",topic:"sqli"},{label:"Email & Social Media Forensics",topic:"phishinganalysis"}] },
   };
 
   const SECTOR_LABEL = { banking: 'Banking', government: 'Government', generic: 'Generic / e-commerce', healthcare: 'Healthcare', defence: 'Defence' };
@@ -1498,32 +1494,37 @@
   function renderProgramPlan(certKey, total){
     const c = CERTS[certKey]; const mods = c.modules; const n = mods.length;
     const area = document.getElementById('resultArea');
-    let per = Math.round(total / n), tight = false;
+    const dareCount = mods.filter(function(m){ return m.topic; }).length || 1;
+    let per = Math.round(total / dareCount), tight = false;
     if (per < 45){ per = 45; tight = true; }
     const variant = per >= 120 ? 'full' : 'compressed';
     const cards = mods.map(function(mod, i){
-      const topic = mod.topic; const block = LIBRARY[topic];
-      const st = block.stages;
+      const num = '<span class="pm-n">'+String(i+1).padStart(2,'0')+'</span>';
+      if (!mod.topic){
+        return '<div class="prog-mod prog-conv">'
+             + '<div class="pm-head">'+num+'<div><h3>'+mod.label+'</h3><div class="pm-sub">Conventional delivery &middot; not a DARE session</div></div></div>'
+             + '<p class="pm-note">'+mod.note+'</p></div>';
+      }
+      const block = LIBRARY[mod.topic]; const st = block.stages;
       const stages = stageLine('D','osD','Deconstruct', st.deconstruct[variant])
                    + stageLine('A','osA','Attack', st.attack[variant])
                    + stageLine('R','osR','Remediate', st.remediate[variant])
                    + stageLine('E','osE','Exchange', st.exchange[variant]);
       return '<div class="prog-mod">'
-           + '<div class="pm-head"><span class="pm-n">'+String(i+1).padStart(2,'0')+'</span>'
-           + '<div><h3>'+mod.label+'</h3><div class="pm-sub">DARE on '+block.label+' &middot; '+per+' min</div></div></div>'
-           + labFor(topic)
+           + '<div class="pm-head">'+num+'<div><h3>'+mod.label+'</h3><div class="pm-sub">DARE on '+block.label+' &middot; '+per+' min</div></div></div>'
+           + labFor(mod.topic)
            + '<div class="pm-stages">'+stages+'</div>'
-           + '<a class="pm-build" href="planning-assistant.html?topic='+topic+'&mins='+per+'">Open the full session outline &rarr;</a>'
+           + '<a class="pm-build" href="planning-assistant.html?topic='+mod.topic+'&mins='+per+'">Open the full session outline &rarr;</a>'
            + '</div>';
     }).join('');
-    const totalUsed = per * n;
+    const totalUsed = per * dareCount;
     const warn = tight
-      ? '<div class="prog-warn">You have set '+total+' minutes for '+n+' modules. That is tight: each is pinned to a 45-minute minimum, so the full programme needs about '+totalUsed+' minutes ('+(totalUsed/60).toFixed(1)+' h). Run it across more than one sitting, or raise the time.</div>'
+      ? '<div class="prog-warn">You set '+total+' minutes for '+dareCount+' hands-on modules. That is tight: each is pinned to a 45-minute minimum, so the DARE sessions alone need about '+totalUsed+' minutes ('+(totalUsed/60).toFixed(1)+' h). Run the programme across more than one sitting, or raise the time.</div>'
       : '';
     area.innerHTML =
         '<div class="prog-head"><h2>'+c.name+' &middot; whole-programme DARE plan</h2></div>'
-      + '<div class="prog-meta">'+n+' sessions &middot; about '+per+' min each &middot; '+Math.round(totalUsed/60*10)/10+' h total</div>'
-      + '<p class="prog-intro">Teach the programme in this order, running each module as a full DARE loop rather than a lecture. The four lines under each are the compressed shape of the session; open any one for the full stage-by-stage outline, sized to the minutes you set. You are not adding to the syllabus, you are resequencing what you already deliver so understanding forms.</p>'
+      + '<div class="prog-meta">'+c.issuer+' &middot; '+n+' official modules &middot; '+dareCount+' run as DARE sessions (~'+per+' min each) &middot; '+Math.round(totalUsed/60*10)/10+' h hands-on</div>'
+      + '<p class="prog-intro">This follows the official syllabus in order. The hands-on modules become DARE sessions (Deconstruct&ndash;Attack&ndash;Remediate&ndash;Exchange); the conceptual and reporting/governance modules are marked for conventional delivery, because DARE only applies once there is a system to attack. Each DARE card names the lab to use, on labs.sarathg.me where one exists, otherwise a TryHackMe / HTB / PortSwigger option or a short spec to build your own. Open any card for the full outline sized to your time. You are resequencing what the syllabus already covers so learners understand it, not rewriting it.</p>'
       + warn
       + '<div class="outline-actions" style="margin-bottom:20px"><button class="btn btn-ghost" id="printProgBtn">Print</button></div>'
       + cards;
@@ -1597,6 +1598,7 @@
     moduleSelect.innerHTML = '<option value="">Choose a module</option>';
     if(!CERTS[certKey]) return;
     CERTS[certKey].modules.forEach(function(mod, i){
+      if(!mod.topic) return; // only hands-on modules can be run as a DARE session
       const o = document.createElement('option'); o.value = i; o.textContent = mod.label + '  (' + LIBRARY[mod.topic].label + ')'; moduleSelect.appendChild(o);
     });
   }
